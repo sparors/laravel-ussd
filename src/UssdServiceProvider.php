@@ -35,7 +35,7 @@ class UssdServiceProvider extends ServiceProvider
 
         // Register the service the package provides.
         $this->app->singleton('ussd', function ($app) {
-            return new Ussd;
+            return new Ussd($app);
         });
     }
 

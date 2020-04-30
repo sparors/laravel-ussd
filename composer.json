@@ -1,5 +1,5 @@
 {
-    "name": "sparors/ussd",
+    "name": "sparors/laravel-ussd",
     "description": "Create ussd with ease",
     "license": "MIT",
     "authors": [
@@ -9,7 +9,7 @@
             "homepage": "https://sparors.github.io"
         }
     ],
-    "homepage": "https://github.com/sparors/ussd",
+    "homepage": "https://github.com/sparors/laravel-ussd",
     "keywords": ["Laravel", "Ussd"],
     "require": {
         "illuminate/support": "~5|~6|~7"

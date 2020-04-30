@@ -4,6 +4,11 @@ namespace Sparors\Ussd\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
+/**
+ * @method static \Sparors\Ussd\Record getRecord(string $id, string $store = null)
+ * 
+ * @see \Sparors\Ussd\Ussd
+ */
 class Ussd extends Facade
 {
     /**
