@@ -1,0 +1,18 @@
+<?php
+
+namespace [namespace];
+
+use Sparors\Ussd\State;
+
+class [class] extends State
+{
+    protected function prepareMenu(): void
+    {
+        //
+    }
+
+    protected function prepareDecision(string $argument): void
+    {
+        //
+    }
+}

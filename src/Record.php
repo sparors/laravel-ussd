@@ -123,7 +123,7 @@ class Record
     }
 
     /**
-     * Remove an item from the cache.
+     * Remove an item from the cache
      *
      * @param  string  $key
      * @return bool

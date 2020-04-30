@@ -23,8 +23,18 @@ class Ussd
      * @param string $store
      * @return Record
      */
-    public function getRecord(string $id, string $store = null)
+    public function record(string $id, string $store = null)
     {
         return new Record(Cache::store($store), $id);
+    }
+
+    public function menu(string $menu = '')
+    {
+        return new Menu($menu);
+    }
+
+    public function machine()
+    {
+        
     }
 }

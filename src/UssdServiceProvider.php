@@ -3,6 +3,7 @@
 namespace Sparors\Ussd;
 
 use Illuminate\Support\ServiceProvider;
+use Sparors\Ussd\Commands\StateCommand;
 
 class UssdServiceProvider extends ServiceProvider
 {
@@ -77,6 +78,8 @@ class UssdServiceProvider extends ServiceProvider
         ], 'ussd.views');*/
 
         // Registering package commands.
-        // $this->commands([]);
+        $this->commands([
+            StateCommand::class
+        ]);
     }
 }

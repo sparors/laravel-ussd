@@ -5,7 +5,8 @@ namespace Sparors\Ussd\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static \Sparors\Ussd\Record getRecord(string $id, string $store = null)
+ * @method static \Sparors\Ussd\Record record(string $id, string $store = null)
+ * @method static \Sparors\Ussd\Menu menu(string $menu)
  * 
  * @see \Sparors\Ussd\Ussd
  */
