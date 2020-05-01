@@ -28,13 +28,20 @@ class Ussd
         return new Record(Cache::store($store), $id);
     }
 
+    /**
+     * @param string $menu
+     * @return Menu
+     */
     public function menu(string $menu = '')
     {
         return new Menu($menu);
     }
 
+    /**
+     * @return Machine
+     */
     public function machine()
     {
-        
+        return new Machine;
     }
 }

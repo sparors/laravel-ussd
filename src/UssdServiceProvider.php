@@ -79,7 +79,7 @@ class UssdServiceProvider extends ServiceProvider
 
         // Registering package commands.
         $this->commands([
-            StateCommand::class
+            StateCommand::class,
         ]);
     }
 }

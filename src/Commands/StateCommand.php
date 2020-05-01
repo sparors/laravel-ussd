@@ -50,8 +50,9 @@ class StateCommand extends Command
             );
 
             $this->ensureDirectoryExists($namespace, $name);
-
             File::put($this->pathFromNamespace($namespace, $name), $content);
+
+            $this->info($this->className($name).' class created.');
         } else {
             $this->error('File Already exists !');
         }

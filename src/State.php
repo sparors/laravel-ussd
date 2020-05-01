@@ -4,6 +4,7 @@ namespace Sparors\Ussd;
 
 abstract class State
 {
+    // Just two needed
     const START = 1;
     const CONTINUE = 2;
     const END = 3;
@@ -16,6 +17,11 @@ abstract class State
 
     /** @var \Sparors\Ussd\Decision */
     protected $decision;
+
+    public final function __construct()
+    {
+        // All State constructors should has no parameter
+    }
 
     /**
      * The menu to be displayed to users
@@ -43,7 +49,7 @@ abstract class State
     /**
      * The new State full path
      */
-    public final function next(string $input): string
+    public final function next(string $input): ?string
     {
         $this->decision = new Decision($input);
         $this->prepareDecision($input);
@@ -54,4 +60,9 @@ abstract class State
      * The function to run before the render method
      */
     private function beforeRendering(): void {}
+
+    public function getType()
+    {
+        return $this->type;
+    }
 }
