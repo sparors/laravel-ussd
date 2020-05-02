@@ -1,10 +1,10 @@
-# Ussd
+# Laravel USSD
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Total Downloads][ico-downloads]][link-downloads]
 [![Build Status][ico-travis]][link-travis]
 
-Create ussd with ease. Take a look at [contributing.md](contributing.md) to see a to do list.
+Build USSD applications with ease. Take a look at [contributing.md](contributing.md) to see a to do list.
 
 ## Installation
 
@@ -14,7 +14,7 @@ Via Composer
 $ composer require sparors/laravel-ussd
 ```
 
-Ussd is meant to provide zero configuration out of the box. But optional you can publish the configuration to customize it to suit you.
+Laravel USSD is meant to provide zero configuration out of the box. But optional you can publish the configuration to customize it to suit you.
 
 ``` bash
 $ php artisan vendor:publish --provider="Sparors\Ussd\UssdServiceProvider" --tag=config
@@ -22,7 +22,7 @@ $ php artisan vendor:publish --provider="Sparors\Ussd\UssdServiceProvider" --tag
 
 ## Usage
 
-Create your ussd states by running the command
+Create your USSD states by running the command
 
 ``` bash
 php artisan ussd:state Welcome
@@ -33,20 +33,25 @@ After creating your states, you can link them to one another and just create a m
 ``` php
 <?php
 
+namespace App\Http\Controllers;
+
 use App\Ussd\Welcome;
-use Illuminate\Support\Facades\Route;
 use Sparors\Ussd\Facades\Ussd;
 
-Route::get('/', function () {
-    $ussd = Ussd::machine()
-        ->setInput('1')
-        ->setNetwork('MTN')
-        ->setSessionId('12350')
-        ->setPhoneNumber('0545112466')
-        ->setInitialState(Welcome::class);
+class UssdController extends Controller
+{
+	public function index()
+	{
+	    $ussd = Ussd::machine()
+	        ->setInput('1')
+	        ->setNetwork('MTN')
+	        ->setSessionId('12350')
+	        ->setPhoneNumber('0545112466')
+	        ->setInitialState(Welcome::class);
 
-    return response()->json($ussd->run());
-});
+	    return response()->json($ussd->run());
+	}
+}
 ```
 
 That all the magic you need to make it run
