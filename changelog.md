@@ -19,5 +19,5 @@ All notable changes to `laravel Ussd` will be documented in this file.
 - Ussd config to allow developers customize behaviour
 - Ussd service Provider class to allow laravel know how to integrate the package
 
-[Unreleased]: ./compare/v0.1.0...HEAD
-[v0.1.0]: ./release/tag/v0.1.0
+[Unreleased]: ../../compare/v0.1.0...HEAD
+[v0.1.0]: ../../releases/tag/v0.1.0
