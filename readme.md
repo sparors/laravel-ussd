@@ -84,6 +84,6 @@ MIT. Please see the [license file](LICENSE) for more information.
 
 [link-packagist]: https://packagist.org/packages/sparors/laravel-ussd
 [link-downloads]: https://packagist.org/packages/sparors/laravel-ussd
-[link-travis]: https://travis-ci.org/sparors/laravel-ussd
+[link-travis]: https://travis-ci.com/sparors/laravel-ussd
 [link-author]: https://github.com/sparors
 [link-contributors]: ../../contributors
