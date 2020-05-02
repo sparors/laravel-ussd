@@ -76,7 +76,7 @@ If you discover any security related issues, please email isaacsai030@gmail.com 
 
 ## License
 
-MIT. Please see the [license file](license.md) for more information.
+MIT. Please see the [license file](LICENSE) for more information.
 
 [ico-version]: https://img.shields.io/packagist/v/sparors/laravel-ussd.svg?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/sparors/laravel-ussd.svg?style=flat-square
