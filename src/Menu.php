@@ -23,6 +23,9 @@ class Menu
     const NUMBERING_SEPARATOR_BRACKET_PLUS_SPACE = ") ";
     const NUMBERING_SEPARATOR_BRACKET_PLUS_DOUBLE_SPACE = ")  ";
 
+    /**
+     * @var string
+     */
     protected $menu;
 
     public function __construct($menu = '')
@@ -72,33 +75,65 @@ class Menu
         }
     }
 
+    /**
+     * @param int $number
+     * @return Menu
+     */
     public function lineBreak($number = 1)
     {
         $this->menu .= str_repeat("\n", $number);
+
         return $this;
     }
 
+    /**
+     * @param string $text
+     * @return Menu
+     */
     public function line($text)
     {
         $this->menu .= "$text\n";
+
         return $this;
     }
 
+    /**
+     * @param string $text
+     * @return Menu
+     */
     public function text($text)
     {
         $this->menu .= $text;
+
         return $this;
     }
 
+    /**
+     * @param array $items
+     * @param string $numberingSeparator
+     * @param string $itemsSeparator
+     * @param string $numbering
+     * @return Menu
+     */
     public function listing($items, $numberingSeparator = self::NUMBERING_SEPARATOR_DOT,
                             $itemsSeparator = self::ITEMS_SEPARATOR_LINE_BREAK,
                             $numbering = self::NUMBERING_NUMERIC)
     {
         $this->listParser($items, 1, count($items), $numberingSeparator, $itemsSeparator,
             $numbering);
+
         return $this;
     }
 
+    /**
+     * @param array $items
+     * @param int $page
+     * @param int $numberPerPage
+     * @param string $numberingSeparator
+     * @param string $itemsSeparator
+     * @param string $numbering
+     * @return Menu
+     */
     public function paginateListing($items, $page = 1, $numberPerPage = 5,
                                     $numberingSeparator = self::NUMBERING_SEPARATOR_DOT,
                                     $itemsSeparator = self::ITEMS_SEPARATOR_LINE_BREAK,
@@ -106,9 +141,13 @@ class Menu
     {
         $this->listParser($items, $page, $numberPerPage, $numberingSeparator, $itemsSeparator,
             $numbering);
+
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function toString()
     {
         return $this->menu;

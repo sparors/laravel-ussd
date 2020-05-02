@@ -4,65 +4,71 @@ namespace Sparors\Ussd;
 
 abstract class State
 {
-    // Just two needed
-    const START = 1;
-    const CONTINUE = 2;
-    const END = 3;
+    /** @var int */
+    const CONTINUE = 1;
+
+    /** @var int */
+    const END = 2;
 
     /** @var int */
     protected $type = self::CONTINUE;
 
-    /** @var \Sparors\Ussd\Menu */
+    /** @var Menu */
     protected $menu;
 
-    /** @var \Sparors\Ussd\Decision */
+    /** @var Decision */
     protected $decision;
 
-    public final function __construct()
-    {
-        // All State constructors should has no parameter
-    }
+    /** @var Record */
+    protected $record;
 
     /**
-     * The menu to be displayed to users
+     * The function to run before the rendering
      */
-    protected abstract function prepareMenu(): void;
+    protected abstract function beforeRendering(): void;
 
     /**
      * The view to be displayed to users
+     * 
+     * @return string
      */
-    public final function render(): string
+    public function render(): string
     {
         $this->menu = new Menu();
         $this->beforeRendering();
-        $this->prepareMenu();
         return $this->menu->toString();
     }
 
     /**
-     * The decision for the next state
+     * The function to run after the rendering
      * 
      * @param string $argument
      */
-    protected abstract function prepareDecision(string $argument): void;
+    protected abstract function afterRendering(string $argument): void;
 
     /**
      * The new State full path
      */
-    public final function next(string $input): ?string
+    public function next(string $input): ?string
     {
         $this->decision = new Decision($input);
-        $this->prepareDecision($input);
+        $this->afterRendering($input);
         return $this->decision->outcome();
     }
 
     /**
-     * The function to run before the render method
+     * @return int
      */
-    private function beforeRendering(): void {}
-
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * @param Record $record
+     */
+    public function setRecord(Record $record)
+    {
+        $this->record = $record;
     }
 }

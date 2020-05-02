@@ -14,19 +14,7 @@ return [
 
     'class_namespace' => 'App\\Http\\Ussd',
 
-    /*
-    |--------------------------------------------------------------------------
-    | Time to live
-    |--------------------------------------------------------------------------
-    |
-    | This value sets the default for how long the record values are to
-    | be cached in your application when not specified.
-    |
-    */
-
-    'cache_ttl' => 0,
-
-    /*
+     /*
     |--------------------------------------------------------------------------
     | Store
     |--------------------------------------------------------------------------
@@ -37,4 +25,29 @@ return [
     */
 
     'store' => null,
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Time to live
+    |--------------------------------------------------------------------------
+    |
+    | This value sets the default for how long the record values are to
+    | be cached in your application when not specified.
+    |
+    */
+
+    'cache_ttl' => null,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default value
+    |--------------------------------------------------------------------------
+    |
+    | This value return the default store value when a given cache key
+    | is not found
+    |
+    */
+
+    'cache_default' => null,
 ];
