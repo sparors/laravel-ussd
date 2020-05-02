@@ -76,7 +76,7 @@ If you discover any security related issues, please email isaacsai030@gmail.com 
 
 ## License
 
-MIT. Please see the [license file](license.md) for more information.
+MIT. Please see the [license file](LICENSE) for more information.
 
 [ico-version]: https://img.shields.io/packagist/v/sparors/laravel-ussd.svg?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/sparors/laravel-ussd.svg?style=flat-square
@@ -84,6 +84,6 @@ MIT. Please see the [license file](license.md) for more information.
 
 [link-packagist]: https://packagist.org/packages/sparors/laravel-ussd
 [link-downloads]: https://packagist.org/packages/sparors/laravel-ussd
-[link-travis]: https://travis-ci.org/sparors/laravel-ussd
+[link-travis]: https://travis-ci.com/sparors/laravel-ussd
 [link-author]: https://github.com/sparors
 [link-contributors]: ../../contributors
