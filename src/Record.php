@@ -28,6 +28,15 @@ class Record
     }
 
     /**
+     * @param int $ttl
+     * @return int|null
+     */
+    private function getTtl($ttl)
+    {
+        return $ttl ?? config('ussd.cache_ttl');
+    }
+
+    /**
      * @param array $keys
      * @return array
      */
@@ -145,12 +154,12 @@ class Record
 
     public function __set($name, $value)
     {
-        $this->set($name, $value);
+        $this->set($name, $value, config('ussd.cache_ttl'));
     }
 
     public function __get($name)
     {
-        return $this->get($name);
+        return $this->get($name, config('ussd.cache_default'));
     }
 
     public function __isset($name)
@@ -166,9 +175,9 @@ class Record
     public function __invoke($argument)
     {
         if (is_string($argument)) {
-            return $this->get($argument);
+            return $this->get($argument, config('ussd.cache_default'));
         } else if (is_array($argument)) {
-            $this->setMultiple($argument);
+            $this->setMultiple($argument, config('ussd.cache_ttl'));
         }
     }
 }

@@ -10,30 +10,35 @@ trait HasManipulators
     public function setSessionId(string $sessionId)
     {
         $this->sessionId = $sessionId;
+
         return $this;
     }
 
     public function setSessionIdFromRequest(string $key)
     {
         $this->sessionId = request($key);
+
         return $this;
     }
 
     public function setPhoneNumber(string $phoneNumber)
     {
         $this->phoneNumber = $phoneNumber;
+
         return $this;
     }
 
     public function setPhoneNumberFromRequest(string $key)
     {
         $this->phoneNumber = request($key);
+
         return $this;
     }
 
     public function setNetwork(string $network)
     {
         $this->network = $network;
+
         return $this;
     }
 
@@ -46,30 +51,21 @@ trait HasManipulators
     public function setInput(string $input)
     {
         $this->input = $input;
+
         return $this;
     }
 
     public function setInputFromRequest(string $key)
     {
         $this->input = request($key);
-        return $this;
-    }
 
-    public function setType(string $type)
-    {
-        $this->type = $type;
-        return $this;
-    }
-
-    public function setTypeFromRequest(string $key)
-    {
-        $this->type = request($key);
         return $this;
     }
 
     public function setStore(string $store)
     {
         $this->store = $store;
+
         return $this;
     }
 
@@ -81,6 +77,7 @@ trait HasManipulators
                 $this->$property = $value;
             }
         }
+
         return $this;
     }
 
@@ -94,6 +91,7 @@ trait HasManipulators
                 $this->{Str::camel($key)} = request($key);
             }
         }
+
         return $this;
     }
 
@@ -106,6 +104,7 @@ trait HasManipulators
         } else {
             $this->initialState = null;
         }
+        
         return $this;
     }
 

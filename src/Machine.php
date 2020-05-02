@@ -29,15 +29,15 @@ class Machine
         $this->input = null;
         $this->response = function (string $message, int $code) {
             return [
-                'default_message' => $message,
-                'default_code' => $code,
+                'message' => $message,
+                'code' => $code,
             ];
         };
     }
 
     public function run()
     {
-        throw_if(is_null($this->sessionId), Exception::class, 'SessionId needs to be set be ussd machine can run.');
+        throw_if(is_null($this->sessionId), Exception::class, 'SessionId needs to be set before ussd machine can run.');
         
         $this->record = new Record(Cache::store($this->store), $this->sessionId);
 
@@ -46,16 +46,27 @@ class Machine
         if ($this->record->has('__init')) {
             $active = $this->record->get('__active');
 
+            throw_if(! class_exists($active), Exception::class, 'Active State Class needs to be set before ussd machine can run. It may be that your session has ended.');
+
             $activeClass = new $active;
 
             $state = $activeClass->next($this->input);
+            
+            throw_if(! class_exists($state), Exception::class, 'Continuing State Class needs to be set before ussd machine can run. It may be that your session has ended.');
+            
             $stateClass = new $state;
+            
+            $stateClass->setRecord($this->record);
             $this->record->set('__active', $state);
         } else {
+            throw_if(! class_exists($this->initialState), Exception::class, 'Initial State Class needs to be set before ussd machine can run.');
+
             $this->record->set('__active', $this->initialState);
             $this->record->set('__init', true);
 
+
             $stateClass = new $this->initialState;
+            $stateClass->setRecord($this->record);
         }
         return ($this->response)($stateClass->render(), $stateClass->getType());
     }
@@ -69,9 +80,9 @@ class Machine
 
     private function saveParameters()
     {
-        $this->saveParameter('__sessionId', $this->sessionId);
-        $this->saveParameter('__phoneNumber', $this->phoneNumber);
-        $this->saveParameter('__network', $this->network);
-        $this->saveParameter('__input', $this->input);
+        $this->saveParameter('sessionId', $this->sessionId);
+        $this->saveParameter('phoneNumber', $this->phoneNumber);
+        $this->saveParameter('network', $this->network);
+        $this->saveParameter('input', $this->input);
     }
 }

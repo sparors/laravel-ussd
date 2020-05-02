@@ -4,10 +4,12 @@ namespace Sparors\Ussd;
 
 class Decision
 {
+    /** @var boolean */
     protected $decided;
 
     protected $argument;
 
+    /** @var string */
     protected $output;
 
     public function __construct($argument = null)
@@ -38,11 +40,20 @@ class Decision
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function outcome()
     {
         return $this->output;
     }
 
+    /**
+     * @param mixed $argument
+     * @param string $output
+     * @param boolean $strict
+     * @return Decision
+     */
     public function equal($argument, $output, $strict = false)
     {
         return $this->setOutputForCondition(function () use ($argument, $strict) {
@@ -53,6 +64,10 @@ class Decision
         }, $output);
     }
 
+    /**
+     * @param string $output
+     * @return Decision
+     */ 
     public function numeric($output)
     {
         return $this->setOutputForCondition(function () {
@@ -60,6 +75,10 @@ class Decision
         }, $output);
     }
 
+    /**
+     * @param string $output
+     * @return Decision
+     */ 
     public function integer($output)
     {
         return $this->setOutputForCondition(function () {
@@ -67,6 +86,10 @@ class Decision
         }, $output);
     }
 
+    /**
+     * @param string $output
+     * @return Decision
+     */ 
     public function amount($output)
     {
         return $this->setOutputForCondition(function () {
@@ -74,6 +97,11 @@ class Decision
         }, $output);
     }
 
+    /**
+     * @param mixed $argument
+     * @param string $output
+     * @return Decision
+     */ 
     public function length($argument, $output)
     {
         return $this->setOutputForCondition(function () use ($argument) {
@@ -81,6 +109,10 @@ class Decision
         }, $output);
     }
 
+    /**
+     * @param string $output
+     * @return Decision
+     */ 
     public function phoneNumber($output)
     {
         return $this->setOutputForCondition(function () {
@@ -88,6 +120,12 @@ class Decision
         }, $output);
     }
 
+    /**
+     * @param int $start
+     * @param int $end
+     * @param string $output
+     * @return Decision
+     */ 
     public function between($start, $end, $output)
     {
         return $this->setOutputForCondition(function () use ($start, $end) {
@@ -95,6 +133,12 @@ class Decision
         }, $output);
     }
 
+    /**
+     * @param array $array
+     * @param string $output
+     * @param bool $strict
+     * @return Decision
+     */ 
     public function in($array, $output, $strict = false)
     {
         return $this->setOutputForCondition(function () use ($array, $strict) {
@@ -102,12 +146,21 @@ class Decision
         }, $output);
     }
 
+    /**
+     * @param callable $function
+     * @param string $output
+     * @return Decision
+     */ 
     public function custom($function, $output)
     {
         $func = function () use ($function) { return $function($this->argument); };
         return $this->setOutputForCondition($func, $output);
     }
 
+    /**
+     * @param string $output
+     * @return Decision
+     */ 
     public function any($output)
     {
         return $this->setOutputForCondition(function () {

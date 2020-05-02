@@ -6,12 +6,12 @@ use Sparors\Ussd\State;
 
 class [class] extends State
 {
-    protected function prepareMenu(): void
+    protected function beforeRendering(): void
     {
         //
     }
 
-    protected function prepareDecision(string $argument): void
+    protected function afterRendering(string $argument): void
     {
         //
     }

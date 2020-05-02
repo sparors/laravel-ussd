@@ -60,7 +60,7 @@ class UssdServiceProvider extends ServiceProvider
         // Publishing the configuration file.
         $this->publishes([
             __DIR__.'/../config/ussd.php' => config_path('ussd.php'),
-        ], 'ussd.config');
+        ], 'config');
 
         // Publishing the views.
         /*$this->publishes([
