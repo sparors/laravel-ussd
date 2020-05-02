@@ -6,6 +6,7 @@ All notable changes to `laravel Ussd` will be documented in this file.
 ### Changed
 - License File changed to github format
 - Updated Readme
+
 ## [v0.1.0] - 2020-05-02
 ### Added
 - Ussd Package Project with README, contributing, changelog, license, etc.
