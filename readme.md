@@ -49,7 +49,7 @@ Route::get('/', function () {
 });
 ```
 
-That all the magic you need to make it run. [See full documentation here](https://sparors.github.io/ussd_docs/)
+That all the magic you need to make it run. [See full documentation here](https://sparors.github.io/ussd-docs/)
 
 ## Change log
 
