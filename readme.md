@@ -177,7 +177,7 @@ Enjoy!!!
 
 ### Documentation
 
-You'll find the documentation on https://sparors.github.io/ussd-docs.
+You'll find the documentation on [https://sparors.github.io/ussd-docs](https://sparors.github.io/ussd-docs/).
 
 
 ### Testing
