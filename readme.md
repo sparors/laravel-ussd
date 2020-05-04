@@ -6,7 +6,7 @@
 
 Build USSD (Unstructured Supplementary Service Data) applications with laravel without breaking a sweat.
 
-### Installation
+## Installation
 
 You can install the package via composer:
 
@@ -20,9 +20,9 @@ Laravel USSD provides zero configuration out of the box. To publish the config, 
 $ php artisan vendor:publish --provider="Sparors\Ussd\UssdServiceProvider" --tag=config
 ```
 
-### Usage
+## Usage
 
-## Creating States
+### Creating States
 
 We provide an artisan ussd command which allows you to quickly create new states.
 
@@ -53,7 +53,7 @@ class Welcome extends State
 }
 ```
 
-## Creating Menus
+### Creating Menus
 
 Step 2: Add your menu to the beforeRendering method
 
@@ -83,7 +83,7 @@ class Welcome extends State
 }
 ```
 
-## Using states
+### Using states
 
 Step 3: Import the welcome state class and pass it to the setInitialState method
 
@@ -111,7 +111,7 @@ class UssdController extends Controller
 }
 ```
 
-## Running the application
+### Running the application
 
 you can use the development server the ships with Laravel by running, from the project root:
 
@@ -122,30 +122,30 @@ You can visit [http://localhot:8000](http://localhot:8000) to see the applicatio
 
 Enjoy!!!
 
-## Running the tests
+### Running the tests
 
 ``` bash
 $ composer test
 ```
 
-## Change log
+### Change log
 
 Please see the [changelog](changelog.md) for more information on what has changed recently.
 
-## Contributing
+### Contributing
 
 Please see [contributing.md](contributing.md) for details and a todolist.
 
-## Security
+### Security
 
 If you discover any security related issues, please email isaacsai030@gmail.com instead of using the issue tracker.
 
-## Credits
+### Credits
 
 - [Sparors Inc][link-author]
 - [All Contributors][link-contributors]
 
-## License
+### License
 
 MIT. Please see the [license file](LICENSE) for more information.
 
