@@ -24,7 +24,7 @@ $ php artisan vendor:publish --provider="Sparors\Ussd\UssdServiceProvider" --tag
 
 ### Creating States
 
-We provide an artisan ussd command which allows you to quickly create new states.
+We provide a ussd artisan command which allows you to quickly create new states.
 
 ``` bash
 php artisan ussd:state Welcome
