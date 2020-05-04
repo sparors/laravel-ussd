@@ -4,39 +4,96 @@
 [![Total Downloads][ico-downloads]][link-downloads]
 [![Build Status][ico-travis]][link-travis]
 
-Build USSD applications with ease. Take a look at [contributing.md](contributing.md) to see a to do list.
+Build USSD (Unstructured Supplementary Service Data) applications with laravel without breaking a sweat.
 
-## Installation
+### Installation
 
-Via Composer
+You can install the package via composer:
 
 ``` bash
 $ composer require sparors/laravel-ussd
 ```
 
-Laravel USSD is meant to provide zero configuration out of the box. But optional you can publish the configuration to customize it to suit you.
+Laravel USSD provides zero configuration out of the box. To publish the config, run the vendor publish command:
 
 ``` bash
 $ php artisan vendor:publish --provider="Sparors\Ussd\UssdServiceProvider" --tag=config
 ```
 
-## Usage
+### Usage
 
-Create your USSD states by running the command
+## Creating States
+
+We provide an artisan ussd command which allows you to quickly create new states.
 
 ``` bash
 php artisan ussd:state Welcome
 ````
 
-After creating your states, you can link them to one another and just create a machine to run it.
+Step 1: Welcome state class generated:
+
+``` php
+<?php
+
+namespace App\Http\Ussd;
+
+use Sparors\Ussd\State;
+
+class Welcome extends State
+{
+    protected function beforeRendering(): void
+    {
+       //
+    }
+
+    protected function afterRendering(string $argument): void
+    {
+        //
+    }
+}
+```
+
+## Creating Menus
+
+Step 2: Add your menu to the beforeRendering method
+
+``` php
+<?php
+
+namespace App\Http\Ussd;
+
+use Sparors\Ussd\State;
+
+class Welcome extends State
+{
+    protected function beforeRendering(): void
+    {
+       $this->menu->text('Welcome To LaravelUSSD')
+            ->lineBreak(1)
+            ->line('Select an option')
+            ->listing(['Airtime Topup', 'Data Bundle', 'TV Subscription', 'ECG/GWCL', 'Talk To Us'])
+            ->lineBreak(2);
+            ->line('Powered by Sparors')
+    }
+
+    protected function afterRendering(string $argument): void
+    {
+        //
+    }
+}
+```
+
+## Using states
+
+Step 3: Import the welcome state class and pass it to the setInitialState method
 
 ``` php
 <?php
 
 namespace App\Http\Controllers;
 
-use App\Ussd\Welcome;
 use Sparors\Ussd\Facades\Ussd;
+use App\Http\Ussd\Welcome;
 
 class UssdController extends Controller
 {
@@ -54,17 +111,26 @@ class UssdController extends Controller
 }
 ```
 
-That all the magic you need to make it run
+## Running the application
 
-## Change log
+you can use the development server the ships with Laravel by running, from the project root:
 
-Please see the [changelog](changelog.md) for more information on what has changed recently.
+```bash
+php artisan serve
+```
+You can visit [http://localhot:8000](http://localhot:8000) to see the application in action.
 
-## Testing
+Enjoy!!!
+
+## Running the tests
 
 ``` bash
 $ composer test
 ```
+
+## Change log
+
+Please see the [changelog](changelog.md) for more information on what has changed recently.
 
 ## Contributing
 
