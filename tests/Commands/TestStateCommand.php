@@ -27,7 +27,7 @@ class TestStateCommand extends TestCase
         File::shouldReceive('makeDirectory')->once();
         File::shouldReceive('put')->once()->andReturn(true);
         $this->artisan('ussd:state', ['name' => 'welcome'])
-            ->expectsOutput('Welcome class created.')
+            ->expectsOutput('Welcome state created successfully')
             ->assertExitCode(0);
     }
 
