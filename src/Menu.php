@@ -37,9 +37,11 @@ class Menu
     {
         if ($numbering == self::NUMBERING_ALPHABETIC_LOWER) {
             return range('a','z')[$index];
-        } else if ($numbering == self::NUMBERING_ALPHABETIC_UPPER) {
+        }
+        if ($numbering == self::NUMBERING_ALPHABETIC_UPPER) {
             return range('A','Z')[$index];
-        } else if ($numbering == self::NUMBERING_NUMERIC) {
+        }
+        if ($numbering == self::NUMBERING_NUMERIC) {
             return $index + 1;
         }
         return '';

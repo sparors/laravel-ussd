@@ -20,7 +20,7 @@ class StateCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Create a new Ussd State';
+    protected $description = 'Create a new ussd state';
 
     /**
      * Create a new command instance.
@@ -52,7 +52,7 @@ class StateCommand extends Command
             $this->ensureDirectoryExists($namespace, $name);
             File::put($this->pathFromNamespace($namespace, $name), $content);
 
-            $this->info($this->className($name).' class created.');
+            $this->info($this->className($name).' state created successfully');
         } else {
             $this->error('File Already exists !');
         }
