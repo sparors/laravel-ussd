@@ -113,7 +113,7 @@ class UssdController extends Controller
 
 ### Running the application
 
-you can use the development server the ships with Laravel by running, from the project root:
+You can use the development server the ships with Laravel by running, from the project root:
 
 ```bash
 php artisan serve
