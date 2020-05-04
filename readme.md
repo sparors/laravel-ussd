@@ -30,6 +30,20 @@ We provide an artisan ussd command which allows you to quickly create new states
 php artisan ussd:state Welcome
 ````
 
+### Creating Nested States
+
+Linux/Unix
+
+``` bash
+php artisan ussd:state Airtime/Welcome
+````
+
+Windows
+
+``` bash
+php artisan ussd:state Airtime\Welcome
+````
+
 Step 1: Welcome state class generated:
 
 ``` php
