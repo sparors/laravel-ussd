@@ -1,10 +1,10 @@
-# Laravel USSD
+# Laravel Ussd
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Total Downloads][ico-downloads]][link-downloads]
 [![Build Status][ico-travis]][link-travis]
 
-Build USSD (Unstructured Supplementary Service Data) applications with laravel without breaking a sweat.
+Build Ussd (Unstructured Supplementary Service Data) applications with laravel without breaking a sweat.
 
 ## Installation
 
@@ -97,7 +97,46 @@ class Welcome extends State
 }
 ```
 
-### Using states
+### Creating Decisions
+
+Add your decision to the afterRendering method
+
+``` php
+<?php
+
+namespace App\Http\Ussd;
+
+use App\Http\Ussd\GetRecipientNumber;
+use App\Http\Ussd\MaintenanceMode;
+use App\Http\Ussd\Error;
+use Sparors\Ussd\State;
+
+class Welcome extends State
+{
+    protected function beforeRendering(): void
+    {
+       $this->menu->text('Welcome To Laravel Ussd')
+            ->lineBreak(1)
+            ->line('Select an option')
+            ->listing(['Airtime Topup', 'Data Bundle', 'TV Subscription', 'ECG/GWCL', 'Talk To Us'])
+            ->lineBreak(2);
+            ->line('Powered by Sparors')
+    }
+
+    protected function afterRendering(string $argument): void
+    {
+        // If input is equal to 1, 2, 3, 4 or 5, render the appropriate state
+        $this->decision->equal('1', GetRecipientNumber::class)
+                       ->equal('2', MaintenanceMode::class)
+                       ->equal('3', MaintenanceMode::class)
+                       ->equal('4', MaintenanceMode::class)
+                       ->equal('5', MaintenanceMode::class)
+                       ->any(Error::class);
+    }
+}
+```
+
+### Using States
 
 Import the welcome state class and pass it to the setInitialState method
 
