@@ -44,7 +44,7 @@ Windows
 php artisan ussd:state Airtime\Welcome
 ````
 
-Step 1: Welcome state class generated:
+Welcome state class generated
 
 ``` php
 <?php
@@ -69,7 +69,7 @@ class Welcome extends State
 
 ### Creating Menus
 
-Step 2: Add your menu to the beforeRendering method
+Add your menu to the beforeRendering method
 
 ``` php
 <?php
@@ -99,7 +99,7 @@ class Welcome extends State
 
 ### Using states
 
-Step 3: Import the welcome state class and pass it to the setInitialState method
+Import the welcome state class and pass it to the setInitialState method
 
 ``` php
 <?php
