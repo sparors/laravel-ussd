@@ -82,7 +82,7 @@ class Welcome extends State
 {
     protected function beforeRendering(): void
     {
-       $this->menu->text('Welcome To LaravelUSSD')
+       $this->menu->text('Welcome To Laravel Ussd')
             ->lineBreak(1)
             ->line('Select an option')
             ->listing(['Airtime Topup', 'Data Bundle', 'TV Subscription', 'ECG/GWCL', 'Talk To Us'])
