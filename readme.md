@@ -122,7 +122,13 @@ You can visit [http://localhot:8000](http://localhot:8000) to see the applicatio
 
 Enjoy!!!
 
-### Running the tests
+
+### Documentation
+
+You'll find the documentation on https://sparors.github.io/ussd-docs.
+
+
+### Testing
 
 ``` bash
 $ composer test
