@@ -14,7 +14,7 @@ You can install the package via composer:
 $ composer require sparors/laravel-ussd
 ```
 
-Laravel USSD provides zero configuration out of the box. To publish the config, run the vendor publish command:
+Laravel Ussd provides zero configuration out of the box. To publish the config, run the vendor publish command:
 
 ``` bash
 $ php artisan vendor:publish --provider="Sparors\Ussd\UssdServiceProvider" --tag=config
