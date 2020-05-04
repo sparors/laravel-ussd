@@ -175,7 +175,6 @@ You can visit [http://localhot:8000](http://localhot:8000) to see the applicatio
 
 Enjoy!!!
 
-
 ### Documentation
 
 You'll find the documentation on https://sparors.github.io/ussd-docs.
