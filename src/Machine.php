@@ -49,14 +49,15 @@ class Machine
             throw_if(! class_exists($active), Exception::class, 'Active State Class needs to be set before ussd machine can run. It may be that your session has ended.');
 
             $activeClass = new $active;
+            $activeClass->setRecord($this->record);
 
             $state = $activeClass->next($this->input);
             
             throw_if(! class_exists($state), Exception::class, 'Continuing State Class needs to be set before ussd machine can run. It may be that your session has ended.');
             
             $stateClass = new $state;
-            
             $stateClass->setRecord($this->record);
+            
             $this->record->set('__active', $state);
         } else {
             throw_if(! class_exists($this->initialState), Exception::class, 'Initial State Class needs to be set before ussd machine can run.');
