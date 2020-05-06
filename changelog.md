@@ -4,6 +4,7 @@ All notable changes to `laravel Ussd` will be documented in this file.
 
 ## [Unreleased]
 ### Changed
+- Add more test
 - License File changed to github format
 - Updated Readme
 

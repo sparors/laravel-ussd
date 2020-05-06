@@ -165,7 +165,7 @@ class UssdController extends Controller
 	        ->setInput('1')
 	        ->setNetwork('MTN')
 	        ->setSessionId('12350')
-	        ->setPhoneNumber('0545112466')
+            ->setPhoneNumber('0545112466')
             ->setInitialState(Welcome::class)
             ->setResponse(function (string $message, int $code) {
                 return [
