@@ -12,7 +12,7 @@ return [
     |
     */
 
-    'class_namespace' => 'App\\Http\\Ussd',
+    'class_namespace' => env('USSD_NAMESPACE', 'App\\Http\\Ussd'),
 
      /*
     |--------------------------------------------------------------------------
@@ -24,7 +24,7 @@ return [
     |
     */
 
-    'store' => null,
+    'cache_store' => env('USSD_STORE', null),
 
 
     /*
@@ -37,7 +37,7 @@ return [
     |
     */
 
-    'cache_ttl' => null,
+    'cache_ttl' => env('USSD_TTL', null),
 
     /*
     |--------------------------------------------------------------------------
@@ -49,5 +49,5 @@ return [
     |
     */
 
-    'cache_default' => null,
+    'cache_default' => env('USSD_DEFAULT_VALUE', null),
 ];

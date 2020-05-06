@@ -23,9 +23,7 @@ class Menu
     const NUMBERING_SEPARATOR_BRACKET_PLUS_SPACE = ") ";
     const NUMBERING_SEPARATOR_BRACKET_PLUS_DOUBLE_SPACE = ")  ";
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $menu;
 
     public function __construct($menu = '')
@@ -33,124 +31,121 @@ class Menu
         $this->menu = $menu;
     }
 
-    private function numberingFor($index, $numbering)
+    private function numberingFor(int $index, string $numbering): string
     {
-        if ($numbering == self::NUMBERING_ALPHABETIC_LOWER) {
+        if ($numbering === self::NUMBERING_ALPHABETIC_LOWER) {
             return range('a','z')[$index];
         }
-        if ($numbering == self::NUMBERING_ALPHABETIC_UPPER) {
+        if ($numbering === self::NUMBERING_ALPHABETIC_UPPER) {
             return range('A','Z')[$index];
         }
-        if ($numbering == self::NUMBERING_NUMERIC) {
-            return $index + 1;
+        if ($numbering === self::NUMBERING_NUMERIC) {
+            return (string) $index + 1;
         }
         return '';
     }
 
-    private function isLastPage($page, $numberPerPage, $items)
-    {
+    private function isLastPage(
+        int $page,
+        int $numberPerPage,
+        array $items
+    ): bool {
         return $page * $numberPerPage >= count($items);
     }
 
 
-    private function pageStartIndex($page, $numberPerPage)
+    private function pageStartIndex(int $page, int $numberPerPage): int
     {
         return $page * $numberPerPage - $numberPerPage;
     }
 
-    private function pageLimit($page, $numberPerPage, $items)
+    private function pageLimit(int $page, int $numberPerPage, array $items): int
     {
-        return $this->isLastPage($page, $numberPerPage, $items) ?
-            count($items) - $this->pageStartIndex($page, $numberPerPage) : $numberPerPage;
+        return (
+            $this->isLastPage($page, $numberPerPage, $items)
+            ? count($items) - $this->pageStartIndex($page, $numberPerPage)
+            : $numberPerPage
+        );
     }
 
-    private function listParser($items, $page, $numberPerPage, $numberingSeparator, $itemsSeparator, $numbering)
-    {
+    private function listParser(
+        array $items,
+        int $page,
+        int $numberPerPage,
+        string $numberingSeparator,
+        string $itemsSeparator,
+        string $numbering
+        ): void {
         $startIndex = $this->pageStartIndex($page, $numberPerPage);
         $limit = $this->pageLimit($page, $numberPerPage, $items);
-        for ($i = 0;$i < $limit;$i++)
-        {
+        for ($i = 0; $i < $limit; $i++) {
             $this->menu .= "{$this->numberingFor($i + $startIndex, $numbering)}{$numberingSeparator}{$items[$i + $startIndex]}";
-            if ($i != $limit - 1) {
+            if ($i !== $limit - 1) {
                 $this->menu .= $itemsSeparator;
             }
         }
     }
 
-    /**
-     * @param int $number
-     * @return Menu
-     */
-    public function lineBreak($number = 1)
+    public function lineBreak(int $number = 1): self
     {
         $this->menu .= str_repeat("\n", $number);
 
         return $this;
     }
 
-    /**
-     * @param string $text
-     * @return Menu
-     */
-    public function line($text)
+    public function line(string $text): self
     {
         $this->menu .= "$text\n";
 
         return $this;
     }
 
-    /**
-     * @param string $text
-     * @return Menu
-     */
-    public function text($text)
+    public function text(string $text): self
     {
         $this->menu .= $text;
 
         return $this;
     }
 
-    /**
-     * @param array $items
-     * @param string $numberingSeparator
-     * @param string $itemsSeparator
-     * @param string $numbering
-     * @return Menu
-     */
-    public function listing($items, $numberingSeparator = self::NUMBERING_SEPARATOR_DOT,
-                            $itemsSeparator = self::ITEMS_SEPARATOR_LINE_BREAK,
-                            $numbering = self::NUMBERING_NUMERIC)
-    {
-        $this->listParser($items, 1, count($items), $numberingSeparator, $itemsSeparator,
-            $numbering);
+    public function listing(
+        array $items,
+        string $numberingSeparator = self::NUMBERING_SEPARATOR_DOT,
+        string $itemsSeparator = self::ITEMS_SEPARATOR_LINE_BREAK,
+        string $numbering = self::NUMBERING_NUMERIC
+    ): self {
+        $this->listParser(
+            $items,
+            1,
+            count($items),
+            $numberingSeparator,
+            $itemsSeparator,
+            $numbering
+        );
 
         return $this;
     }
 
-    /**
-     * @param array $items
-     * @param int $page
-     * @param int $numberPerPage
-     * @param string $numberingSeparator
-     * @param string $itemsSeparator
-     * @param string $numbering
-     * @return Menu
-     */
-    public function paginateListing($items, $page = 1, $numberPerPage = 5,
-                                    $numberingSeparator = self::NUMBERING_SEPARATOR_DOT,
-                                    $itemsSeparator = self::ITEMS_SEPARATOR_LINE_BREAK,
-                                    $numbering = self::NUMBERING_NUMERIC)
-    {
-        $this->listParser($items, $page, $numberPerPage, $numberingSeparator, $itemsSeparator,
-            $numbering);
+    public function paginateListing(
+        array $items,
+        int $page = 1,
+        int $numberPerPage = 5,
+        string $numberingSeparator = self::NUMBERING_SEPARATOR_DOT,
+        string $itemsSeparator = self::ITEMS_SEPARATOR_LINE_BREAK,
+        string $numbering = self::NUMBERING_NUMERIC
+    ): self {
+        $this->listParser(
+            $items,
+            $page,
+            $numberPerPage,
+            $numberingSeparator,
+            $itemsSeparator,
+            $numbering
+        );
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function toString()
+    public function toString(): string
     {
         return $this->menu;
     }

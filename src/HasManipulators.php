@@ -2,7 +2,6 @@
 
 namespace Sparors\Ussd;
 
-use Closure;
 use Illuminate\Support\Str;
 
 trait HasManipulators
@@ -87,7 +86,7 @@ trait HasManipulators
             $property = Str::camel($property);
             if (property_exists($this, $property)) {
                 $this->$property = request($key);
-            } else if (property_exists($this, Str::camel($key))) {
+            } elseif (property_exists($this, Str::camel($key))) {
                 $this->{Str::camel($key)} = request($key);
             }
         }
@@ -99,7 +98,7 @@ trait HasManipulators
     {
         if (is_object($state)) {
             $this->initialState = get_class($state);
-        } else if (is_string($state) && class_exists($state)) {
+        } elseif (is_string($state) && class_exists($state)) {
             $this->initialState = $state;
         } else {
             $this->initialState = null;
