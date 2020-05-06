@@ -82,7 +82,7 @@ class Welcome extends State
 {
     protected function beforeRendering(): void
     {
-       $this->menu->text('Welcome To LaravelUSSD')
+       $this->menu->text('Welcome To Laravel USSD')
             ->lineBreak(1)
             ->line('Select an option')
             ->listing(['Airtime Topup', 'Data Bundle', 'TV Subscription', 'ECG/GWCL', 'Talk To Us'])
@@ -97,9 +97,9 @@ class Welcome extends State
 }
 ```
 
-### Creating Decisions
+### Creating Decisions and Linking with States
 
-Add your decision to the afterRendering method
+Add your decision to the afterRendering method and link them with states
 
 ``` php
 <?php
@@ -136,9 +136,9 @@ class Welcome extends State
 }
 ```
 
-### Using States
+### Setting Initial State
 
-Import the welcome state class and pass it to the setInitialState method
+Import a state class of choice. **E.g. Welcome** and pass it to the setInitialState method
 
 ``` php
 <?php
@@ -157,7 +157,18 @@ class UssdController extends Controller
 	        ->setNetwork('MTN')
 	        ->setSessionId('12350')
 	        ->setPhoneNumber('0545112466')
-	        ->setInitialState(Welcome::class);
+	        ->setInitialState(Welcome::class)
+		
+		// Override default response and set it to match your service provider
+		->setResponse(function(string $message, int $code) {
+		    return [
+			'USSDResp' => [
+			    'action' => $code === 2 ? 'prompt' : 'input',
+			    'menus' => '',
+			    'title' => $message,
+			];
+		    ];
+		});
 
 	    return response()->json($ussd->run());
 	}
@@ -171,7 +182,7 @@ You can use the development server the ships with Laravel by running, from the p
 ```bash
 php artisan serve
 ```
-You can visit [http://localhot:8000](http://localhot:8000) to see the application in action.
+You can visit [http://localhost:8000](http://localhost:8000) to see the application in action.
 
 Enjoy!!!
 
