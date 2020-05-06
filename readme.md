@@ -11,13 +11,13 @@ Build Ussd (Unstructured Supplementary Service Data) applications with laravel w
 You can install the package via composer:
 
 ``` bash
-$ composer require sparors/laravel-ussd
+composer require sparors/laravel-ussd
 ```
 
 Laravel Ussd provides zero configuration out of the box. To publish the config, run the vendor publish command:
 
 ``` bash
-$ php artisan vendor:publish --provider="Sparors\Ussd\UssdServiceProvider" --tag=config
+php artisan vendor:publish --provider="Sparors\Ussd\UssdServiceProvider" --tag=config
 ```
 
 ## Usage
@@ -28,7 +28,7 @@ We provide a ussd artisan command which allows you to quickly create new states.
 
 ``` bash
 php artisan ussd:state Welcome
-````
+```
 
 ### Creating Nested States
 
@@ -36,13 +36,13 @@ Linux/Unix
 
 ``` bash
 php artisan ussd:state Airtime/Welcome
-````
+```
 
 Windows
 
 ``` bash
 php artisan ussd:state Airtime\Welcome
-````
+```
 
 Welcome state class generated
 
@@ -82,12 +82,18 @@ class Welcome extends State
 {
     protected function beforeRendering(): void
     {
-       $this->menu->text('Welcome To LaravelUSSD')
-            ->lineBreak(1)
+       $this->menu->text('Welcome To Laravel USSD')
+            ->lineBreak(2)
             ->line('Select an option')
-            ->listing(['Airtime Topup', 'Data Bundle', 'TV Subscription', 'ECG/GWCL', 'Talk To Us'])
+            ->listing([
+                'Airtime Topup',
+                'Data Bundle',
+                'TV Subscription',
+                'ECG/GWCL',
+                'Talk To Us'
+            ])
             ->lineBreak(2);
-            ->line('Powered by Sparors')
+            ->text('Powered by Sparors')
     }
 
     protected function afterRendering(string $argument): void
@@ -116,21 +122,24 @@ class Welcome extends State
     protected function beforeRendering(): void
     {
        $this->menu->text('Welcome To Laravel Ussd')
-            ->lineBreak(1)
+            ->lineBreak(2)
             ->line('Select an option')
-            ->listing(['Airtime Topup', 'Data Bundle', 'TV Subscription', 'ECG/GWCL', 'Talk To Us'])
+            ->listing([
+                'Airtime Topup',
+                'Data Bundle',
+                'TV Subscription',
+                'ECG/GWCL',
+                'Talk To Us'
+            ])
             ->lineBreak(2);
-            ->line('Powered by Sparors')
+            ->text('Powered by Sparors')
     }
 
     protected function afterRendering(string $argument): void
     {
         // If input is equal to 1, 2, 3, 4 or 5, render the appropriate state
         $this->decision->equal('1', GetRecipientNumber::class)
-                       ->equal('2', MaintenanceMode::class)
-                       ->equal('3', MaintenanceMode::class)
-                       ->equal('4', MaintenanceMode::class)
-                       ->equal('5', MaintenanceMode::class)
+                       ->between(2, 5, MaintenanceMode::class)
                        ->any(Error::class);
     }
 }
@@ -157,7 +166,15 @@ class UssdController extends Controller
 	        ->setNetwork('MTN')
 	        ->setSessionId('12350')
 	        ->setPhoneNumber('0545112466')
-	        ->setInitialState(Welcome::class);
+            ->setInitialState(Welcome::class)
+            ->setResponse(function (string $message, int $code) {
+                return [
+                    'USSDResp' => [
+                        'action' => $code === 2 ? 'prompt' : 'input',
+                        'menus' => '',
+                        'title' => $message,
+                ];
+            });
 
 	    return response()->json($ussd->run());
 	}
@@ -168,10 +185,10 @@ class UssdController extends Controller
 
 You can use the development server the ships with Laravel by running, from the project root:
 
-```bash
+``` bash
 php artisan serve
 ```
-You can visit [http://localhot:8000](http://localhot:8000) to see the application in action.
+You can visit [http://localhost:8000](http://localhost:8000) to see the application in action.
 
 Enjoy!!!
 
