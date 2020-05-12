@@ -42,6 +42,6 @@ class Ussd
      */
     public function machine()
     {
-        return new Machine;
+        return new Machine();
     }
 }

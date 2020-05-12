@@ -5,13 +5,13 @@ namespace Sparors\Ussd;
 abstract class State
 {
     /** @var int */
-    const CONTINUE = 1;
+    const INPUT = 'input';
 
     /** @var int */
-    const END = 2;
+    const PROMPT = 'prompt';
 
-    /** @var int */
-    protected $type = self::CONTINUE;
+    /** @var string */
+    protected $action = self::INPUT;
 
     /** @var Menu */
     protected $menu;
@@ -57,11 +57,11 @@ abstract class State
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getType()
+    public function getAction()
     {
-        return $this->type;
+        return $this->action;
     }
 
     /**

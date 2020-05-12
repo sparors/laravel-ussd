@@ -4,12 +4,13 @@ namespace Sparors\Ussd;
 
 class Decision
 {
-    /** @var boolean */
+    /** @var bool */
     protected $decided;
 
+    /** @var mixed */
     protected $argument;
-
-    /** @var string */
+    
+    /** @var string|null */
     protected $output;
 
     public function __construct($argument = null)
@@ -19,152 +20,135 @@ class Decision
         $this->output = null;
     }
 
-    private function guardAgainstReDeciding()
+    private function guardAgainstReDeciding(): bool
     {
         return !$this->decided;
     }
 
-    private function setOutput($output)
+    private function setOutput($output): void
     {
         $this->output = $output;
         $this->decided = true;
     }
 
-    private function setOutputForCondition($condition, $output)
+    private function setOutputForCondition($condition, $output): self
     {
         if ($this->guardAgainstReDeciding()) {
             if ($condition()) {
                 $this->setOutput($output);
             }
         }
+
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function outcome()
+    public function outcome(): ?string
     {
         return $this->output;
     }
 
-    /**
-     * @param mixed $argument
-     * @param string $output
-     * @param boolean $strict
-     * @return Decision
-     */
-    public function equal($argument, $output, $strict = false)
+    public function equal($argument, string $output, bool $strict = false): self
     {
-        return $this->setOutputForCondition(function () use ($argument, $strict) {
-            if ($strict) {
-                return $argument === $this->argument;
-            }
-            return $argument == $this->argument;
-        }, $output);
+        return $this->setOutputForCondition(
+            function () use ($argument, $strict) {
+                if ($strict) {
+                    return $argument === $this->argument;
+                }
+                return $argument == $this->argument;
+            },
+            $output
+        );
     }
 
-    /**
-     * @param string $output
-     * @return Decision
-     */ 
-    public function numeric($output)
+    public function numeric(string $output): self
     {
-        return $this->setOutputForCondition(function () {
-            return is_numeric($this->argument);
-        }, $output);
+        return $this->setOutputForCondition(
+            function () {
+                return is_numeric($this->argument);
+            },
+            $output
+        );
     }
 
-    /**
-     * @param string $output
-     * @return Decision
-     */ 
-    public function integer($output)
+    public function integer(string $output): self
     {
-        return $this->setOutputForCondition(function () {
-            return is_integer($this->argument);
-        }, $output);
+        return $this->setOutputForCondition(
+            function () {
+                return is_integer($this->argument);
+            },
+            $output
+        );
     }
 
-    /**
-     * @param string $output
-     * @return Decision
-     */ 
-    public function amount($output)
+    public function amount(string $output): self
     {
-        return $this->setOutputForCondition(function () {
-            return preg_match("/^[0-9]+(?:\.[0-9]{1,2})?$/", $this->argument);
-        }, $output);
+        return $this->setOutputForCondition(
+            function () {
+                return preg_match(
+                    "/^[0-9]+(?:\.[0-9]{1,2})?$/",
+                    $this->argument
+                );
+            },
+            $output
+        );
     }
 
-    /**
-     * @param mixed $argument
-     * @param string $output
-     * @return Decision
-     */ 
-    public function length($argument, $output)
+    public function length($argument, string $output): self
     {
-        return $this->setOutputForCondition(function () use ($argument) {
-            return strlen($this->argument) === $argument;
-        }, $output);
+        return $this->setOutputForCondition(
+            function () use ($argument) {
+                return strlen($this->argument) === $argument;
+            },
+            $output
+        );
     }
 
-    /**
-     * @param string $output
-     * @return Decision
-     */ 
-    public function phoneNumber($output)
+    public function phoneNumber(string $output): self
     {
-        return $this->setOutputForCondition(function () {
-            return preg_match("/^[0][0-9]{9}$/", $this->argument);
-        }, $output);
+        return $this->setOutputForCondition(
+            function () {
+                return preg_match("/^[0][0-9]{9}$/", $this->argument);
+            },
+            $output
+        );
     }
 
-    /**
-     * @param int $start
-     * @param int $end
-     * @param string $output
-     * @return Decision
-     */ 
-    public function between($start, $end, $output)
+    public function between(int $start, int $end, string $output): self
     {
-        return $this->setOutputForCondition(function () use ($start, $end) {
-            return $this->argument >= $start && $this->argument <= $end;
-        }, $output);
+        return $this->setOutputForCondition(
+            function () use ($start, $end) {
+                return $this->argument >= $start && $this->argument <= $end;
+            },
+            $output
+        );
     }
 
-    /**
-     * @param array $array
-     * @param string $output
-     * @param bool $strict
-     * @return Decision
-     */ 
-    public function in($array, $output, $strict = false)
+    public function in(array $array, string $output, bool $strict = false): self
     {
-        return $this->setOutputForCondition(function () use ($array, $strict) {
-            return in_array($array, $this->argument, $strict);
-        }, $output);
+        return $this->setOutputForCondition(
+            function () use ($array, $strict) {
+                return in_array($array, $this->argument, $strict);
+            },
+            $output
+        );
     }
 
-    /**
-     * @param callable $function
-     * @param string $output
-     * @return Decision
-     */ 
-    public function custom($function, $output)
+    public function custom(callable $function, string $output): self
     {
-        $func = function () use ($function) { return $function($this->argument); };
+        $func = function () use ($function) { 
+            return $function($this->argument);
+        };
+        
         return $this->setOutputForCondition($func, $output);
     }
 
-    /**
-     * @param string $output
-     * @return Decision
-     */ 
-    public function any($output)
+    public function any(string $output): self
     {
-        return $this->setOutputForCondition(function () {
-            return true;
-        }, $output);
+        return $this->setOutputForCondition(
+            function () {
+                return true;
+            },
+            $output
+        );
     }
 }

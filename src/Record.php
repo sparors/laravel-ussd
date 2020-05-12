@@ -24,12 +24,12 @@ class Record
      */
     private function getKey($key)
     {
-        return "$this->id.$key";
+        return "ussd_$this->id.$key";
     }
 
     /**
      * @param int $ttl
-     * @return int|null
+     * @return \DateTimeInterface|\DateInterval|int|null
      */
     private function getTtl($ttl)
     {
@@ -42,7 +42,10 @@ class Record
      */
     private function getKeys($keys)
     {
-        return array_map(function ($key) { return $this->getKey($key); }, $keys);
+        return array_map(
+            function ($key) { return $this->getKey($key); },
+            $keys
+        );
     }
 
     /**
@@ -55,6 +58,7 @@ class Record
         foreach($values as $key => $value) {
             $newValues[$this->getKey($key)] = $value;
         }
+
         return $newValues;
     }
 
@@ -117,7 +121,9 @@ class Record
      */
     public function getMultiple($keys, $default = null)
     {
-        return array_values((array)$this->cache->getMultiple($this->getKeys($keys), $default));
+        return array_values(
+            (array)$this->cache->getMultiple($this->getKeys($keys), $default)
+        );
     }
 
     /**
@@ -176,7 +182,9 @@ class Record
     {
         if (is_string($argument)) {
             return $this->get($argument, config('ussd.cache_default'));
-        } else if (is_array($argument)) {
+        }
+        
+        if (is_array($argument)) {
             $this->setMultiple($argument, config('ussd.cache_ttl'));
         }
     }

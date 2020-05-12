@@ -3,11 +3,18 @@
 All notable changes to `laravel Ussd` will be documented in this file.
 
 ## [Unreleased]
+
+## [v1.0.0] - 2020-05-12
+### Added
+- More test
+- Machine SetInitialState can take callable
 ### Changed
+- State type changed to action
 - License File changed to github format
 - Updated Readme
+- Updated changelog
 
-## [v0.1.0] - 2020-05-02
+## [v0.1.0] - 2020-05-02 
 ### Added
 - Ussd Package Project with README, contributing, changelog, license, etc.
 - State class to define what should occur at various stages when user navigates
@@ -22,5 +29,6 @@ All notable changes to `laravel Ussd` will be documented in this file.
 - Ussd config to allow developers customize behaviour
 - Ussd service Provider class to allow laravel know how to integrate the package
 
-[Unreleased]: ../../compare/v0.1.0...HEAD
+[Unreleased]: ../../compare/v1.0.0...HEAD
+[v1.0.0]: ../../compare/v0.1.0...v1.0.0
 [v0.1.0]: ../../releases/tag/v0.1.0
