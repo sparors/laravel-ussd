@@ -12,12 +12,13 @@ class MachineTest extends TestCase
     {
         $machine = (new Machine())->setSessionId('1234')
             ->setInput('1')
-            ->setInitialState(HelloState::class);
+            ->setInitialState(HelloState::class)
+            ->setStore('array');
         
         $this->assertEquals(
             [
                 'message' => 'Hello World',
-                'code' => 1
+                'action' => 'input'
             ],
             $machine->run()
         );
@@ -27,7 +28,25 @@ class MachineTest extends TestCase
         $this->assertEquals(
             [
                 'message' => 'Bye World',
-                'code' => 2
+                'action' => 'prompt'
+            ],
+            $machine->run()
+        );
+    }
+
+    public function testInitialStateCanBeACallable()
+    {
+        $machine = (new Machine())->setSessionId('1234')
+            ->setInput('1')
+            ->setInitialState(function () {
+                return HelloState::class;
+            })
+            ->setStore('array');
+        
+        $this->assertEquals(
+            [
+                'message' => 'Hello World',
+                'action' => 'input'
             ],
             $machine->run()
         );

@@ -24,7 +24,7 @@ class Record
      */
     private function getKey($key)
     {
-        return "$this->id.$key";
+        return "ussd_$this->id.$key";
     }
 
     /**
@@ -182,7 +182,9 @@ class Record
     {
         if (is_string($argument)) {
             return $this->get($argument, config('ussd.cache_default'));
-        } else if (is_array($argument)) {
+        }
+        
+        if (is_array($argument)) {
             $this->setMultiple($argument, config('ussd.cache_ttl'));
         }
     }
