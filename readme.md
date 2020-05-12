@@ -161,8 +161,8 @@ class UssdController extends Controller
 {
 	public function index()
 	{
-	    $ussd = Ussd::machine()
-	          ->setFromRequest([
+        $ussd = Ussd::machine()
+            ->setFromRequest([
                 'network',
                 'phone_number' => 'msisdn',
                 'sessionId' => 'UserSessionID'
