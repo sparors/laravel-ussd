@@ -165,7 +165,7 @@ class UssdController extends Controller
             ->setFromRequest([
                 'network',
                 'phone_number' => 'msisdn',
-                'sessionId' => 'UserSessionID'
+                'sessionId' => 'UserSessionID',
                 'input' => 'msg'
             ])
             ->setInitialState(Welcome::class)
