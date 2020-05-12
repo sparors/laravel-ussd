@@ -167,10 +167,10 @@ class UssdController extends Controller
 	        ->setSessionId('12350')
             ->setPhoneNumber('0545112466')
             ->setInitialState(Welcome::class)
-            ->setResponse(function (string $message, int $code) {
+            ->setResponse(function (string $message, string $action) {
                 return [
                     'USSDResp' => [
-                        'action' => $code === 2 ? 'prompt' : 'input',
+                        'action' => $acion,
                         'menus' => '',
                         'title' => $message,
                 ];
