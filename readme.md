@@ -175,6 +175,7 @@ class UssdController extends Controller
                         'action' => $acion,
                         'menus' => '',
                         'title' => $message,
+                    ]
                 ];
             });
 
