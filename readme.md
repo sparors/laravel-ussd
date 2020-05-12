@@ -103,9 +103,9 @@ class Welcome extends State
 }
 ```
 
-### Creating Decisions
+### Creating Decisions and Linking them with States
 
-Add your decision to the afterRendering method
+Add your decision to the afterRendering method and link them with states
 
 ``` php
 <?php
@@ -145,7 +145,7 @@ class Welcome extends State
 }
 ```
 
-### Using States
+### Setting Initial State
 
 Import the welcome state class and pass it to the setInitialState method
 
@@ -162,10 +162,12 @@ class UssdController extends Controller
 	public function index()
 	{
 	    $ussd = Ussd::machine()
-	        ->setInput('1')
-	        ->setNetwork('MTN')
-	        ->setSessionId('12350')
-            ->setPhoneNumber('0545112466')
+	          ->setFromRequest([
+                'network',
+                'phone_number' => 'msisdn',
+                'sessionId' => 'UserSessionID'
+                'input' => 'msg'
+            ])
             ->setInitialState(Welcome::class)
             ->setResponse(function (string $message, string $action) {
                 return [
