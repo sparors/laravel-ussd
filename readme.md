@@ -162,20 +162,21 @@ class UssdController extends Controller
 	public function index()
 	{
 	    $ussd = Ussd::machine()
-		    ->setInput('1')
-	            ->setNetwork('MTN')
-		    ->setSessionId('12350')
-		    ->setPhoneNumber('0545112466')
-		    ->setInitialState(Welcome::class)
-		    ->setResponse(function (string $message, int $code) {
-			return [
-			    'USSDResp' => [
-				'action' => $code === 2 ? 'prompt' : 'input',
-				'menus' => '',
-				'title' => $message
-			    ]
-			];
-		    });
+	          ->setFromRequest([
+                'network',
+                'phone_number' => 'msisdn',
+                'sessionId' => 'UserSessionID'
+                'input' => 'msg'
+            ])
+            ->setInitialState(Welcome::class)
+            ->setResponse(function (string $message, string $action) {
+                return [
+                    'USSDResp' => [
+                        'action' => $acion,
+                        'menus' => '',
+                        'title' => $message,
+                ];
+            });
 
 	    return response()->json($ussd->run());
 	}

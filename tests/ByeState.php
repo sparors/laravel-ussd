@@ -6,7 +6,7 @@ use Sparors\Ussd\State;
 
 class ByeState extends State
 {
-    protected $type = self::END;
+    protected $action = self::PROMPT;
 
     public function beforeRendering(): void
     {

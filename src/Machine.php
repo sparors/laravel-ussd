@@ -2,6 +2,7 @@
 
 namespace Sparors\Ussd;
 
+use Closure;
 use Exception;
 use Illuminate\Support\Facades\Cache;
 
@@ -9,7 +10,7 @@ class Machine
 {
     use HasManipulators;
 
-    /** @var string */
+    /** @var string|callable|Closure */
     protected $initialState;
 
     /** @var string|null */
@@ -40,10 +41,10 @@ class Machine
         $this->network = null;
         $this->input = null;
         $this->store = config('ussd.cache_store', null);
-        $this->response = function (string $message, int $code) {
+        $this->response = function (string $message, string $action) {
             return [
                 'message' => $message,
-                'code' => $code,
+                'action' => $action,
             ];
         };
     }
@@ -84,6 +85,9 @@ class Machine
             
             $this->record->set('__active', $state);
         } else {
+            
+            $this->processInitialState();
+
             $this->ensureClassExist(
                 $this->initialState,
                 'Initial State Class needs to be set before'
@@ -98,7 +102,7 @@ class Machine
             $stateClass->setRecord($this->record);
         }
 
-        return ($this->response)($stateClass->render(), $stateClass->getType());
+        return ($this->response)($stateClass->render(), $stateClass->getAction());
     }
 
     private function saveParameter(string $key, $value)
@@ -138,5 +142,13 @@ class Machine
             Exception::class,
             'SessionId needs to be set before ussd machine can run.'
         );
+    }
+
+
+    private function processInitialState(): void
+    {
+        if (is_callable($this->initialState)) {
+            $this->initialState = ($this->initialState)();
+        }
     }
 }

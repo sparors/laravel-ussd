@@ -2,6 +2,7 @@
 
 namespace Sparors\Ussd;
 
+use Closure;
 use Illuminate\Support\Str;
 
 trait HasManipulators
@@ -96,9 +97,11 @@ trait HasManipulators
 
     public function setInitialState($state)
     {
-        if (is_object($state)) {
+        if (is_object($state) && (!$state instanceof Closure)) {
             $this->initialState = get_class($state);
         } elseif (is_string($state) && class_exists($state)) {
+            $this->initialState = $state;
+        } elseif (is_callable($state)) {
             $this->initialState = $state;
         } else {
             $this->initialState = null;
