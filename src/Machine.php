@@ -135,7 +135,7 @@ class Machine
     /**
      * @throws Exception
      */
-    private function ensureSessionIdIsSet(string $session): void
+    private function ensureSessionIdIsSet(?string $session): void
     {
         throw_if(
             is_null($session),
