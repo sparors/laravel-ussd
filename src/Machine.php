@@ -123,7 +123,7 @@ class Machine
     /**
      * @throws Exception
      */
-    private function ensureClassExist(string $class, string $message): void
+    private function ensureClassExist(?string $class, string $message): void
     {
         throw_if(
             !class_exists($class),
