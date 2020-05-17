@@ -49,7 +49,7 @@ class Machine
         };
     }
 
-    public function run(): array
+    public function run()
     {
         $this->ensureSessionIdIsSet($this->sessionId);
         
