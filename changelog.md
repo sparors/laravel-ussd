@@ -13,7 +13,9 @@ All notable changes to `laravel Ussd` will be documented in this file.
 ### Changed
 - config file class namespace split to action and state namespace
 - Updated changelog
+- Readme
 - machine class now runs ussd actions
+- Updated contributing
 
 ## [v1.0.0] - 2020-05-12
 ### Added
