@@ -79,9 +79,22 @@ class Machine
                 'Continuing State Class needs to be set before ussd '
                 . 'machine can run. It may be that your session has ended.'
             );
-            
+
             $stateClass = new $state;
             $stateClass->setRecord($this->record);
+
+            if (is_subclass_of($stateClass, Action::class)) {
+                $state = $stateClass->run();
+
+                $this->ensureClassExist(
+                    $state,
+                    'Ussd Action Class needs to return next State Class'
+                );
+
+                $stateClass = new $state;
+                $stateClass->setRecord($this->record);
+
+            }
             
             $this->record->set('__active', $state);
         } else {

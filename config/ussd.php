@@ -4,7 +4,7 @@ return [
     
     /*
     |--------------------------------------------------------------------------
-    | Class Namespace
+    | State Class Namespace
     |--------------------------------------------------------------------------
     |
     | This value sets the root namespace for Ussd State component classes in
@@ -12,7 +12,19 @@ return [
     |
     */
 
-    'class_namespace' => env('USSD_NAMESPACE', 'App\\Http\\Ussd'),
+    'state_namespace' => env('USSD_STATE_NS', 'App\\Http\\Ussd\\States'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Action Class Namespace
+    |--------------------------------------------------------------------------
+    |
+    | This value sets the root namespace for Ussd Action component classes in
+    | your application.
+    |
+    */
+
+    'action_namespace' => env('USSD_ACTION_NS', 'App\\Http\\Ussd\\Actions'),
 
      /*
     |--------------------------------------------------------------------------

@@ -4,6 +4,17 @@ All notable changes to `laravel Ussd` will be documented in this file.
 
 ## [Unreleased]
 
+## [v1.1.0] - 2020-05-24
+### Added
+- Action class to run application logics
+- Artisan command to create action class
+- increment method to records
+- decrement method to records
+### Changed
+- config file class namespace split to action and state namespace
+- Updated changelog
+- machine class now runs ussd actions
+
 ## [v1.0.0] - 2020-05-12
 ### Added
 - More test
@@ -29,6 +40,7 @@ All notable changes to `laravel Ussd` will be documented in this file.
 - Ussd config to allow developers customize behaviour
 - Ussd service Provider class to allow laravel know how to integrate the package
 
-[Unreleased]: ../../compare/v1.0.0...HEAD
+[Unreleased]: ../../compare/v1.1.0...HEAD
+[v1.1.0]: ../../compare/v1.0.0...v1.1.0
 [v1.0.0]: ../../compare/v0.1.0...v1.0.0
 [v0.1.0]: ../../releases/tag/v0.1.0
