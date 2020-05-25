@@ -156,7 +156,7 @@ class Welcome extends State
 }
 ```
 
-### Creating Decisions and Linking them with States
+### Linking States with Decisions
 
 Add your decision to the afterRendering method and link them with states
 
