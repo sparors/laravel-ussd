@@ -4,6 +4,7 @@ namespace Sparors\Ussd\Tests;
 
 use Sparors\Ussd\State;
 
+/** @internal */
 class HelloState extends State
 {
     public function beforeRendering(): void
@@ -13,6 +14,6 @@ class HelloState extends State
 
     public function afterRendering(string $argument): void
     {
-        $this->decision->any(ByeState::class);
+        $this->decision->any(RunAction::class);
     }
 }

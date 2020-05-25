@@ -17,7 +17,7 @@ composer require sparors/laravel-ussd
 Laravel Ussd provides zero configuration out of the box. To publish the config, run the vendor publish command:
 
 ``` bash
-php artisan vendor:publish --provider="Sparors\Ussd\UssdServiceProvider" --tag=config
+php artisan vendor:publish --provider="Sparors\Ussd\UssdServiceProvider" --tag=ussd-config
 ```
 
 ## Usage
@@ -49,7 +49,7 @@ Welcome state class generated
 ``` php
 <?php
 
-namespace App\Http\Ussd;
+namespace App\Http\Ussd\States;
 
 use Sparors\Ussd\State;
 
@@ -67,6 +67,61 @@ class Welcome extends State
 }
 ```
 
+### Creating Actions
+
+> Available from **v1.1.0**
+
+We provide a ussd artisan command which allows you to quickly create new actions.
+
+``` bash
+php artisan ussd:action MakePayment
+```
+
+MakePayment action class generated
+
+``` php
+<?php
+
+namespace App\Http\Ussd\Actions;
+
+use Sparors\Ussd\Action;
+
+class MakePayment extends Action
+{
+    public function run(): string
+    {
+        return ''; // The state after this
+    }
+}
+```
+
+Run you logic and return the next state fully qualified class name
+
+``` php
+<?php
+
+namespace App\Http\Ussd\Actions;
+
+use Sparors\Ussd\Action;
+use App\Http\Ussd\States\PaymentSuccess;
+use App\Http\Ussd\States\PaymentError;
+
+class MakePayment extends Action
+{
+    public function run(): string
+    {
+        $response = Http::post('/payment', [
+            'phone_number' => $this->record->phoneNumber
+        ]);
+        
+        if ($response->ok()) {
+            return PaymentSuccess::class;
+        }
+        return PaymentError::class;
+    }
+}
+```
+
 ### Creating Menus
 
 Add your menu to the beforeRendering method
@@ -74,7 +129,7 @@ Add your menu to the beforeRendering method
 ``` php
 <?php
 
-namespace App\Http\Ussd;
+namespace App\Http\Ussd\States;
 
 use Sparors\Ussd\State;
 
@@ -82,7 +137,9 @@ class Welcome extends State
 {
     protected function beforeRendering(): void
     {
-       $this->menu->text('Welcome To Laravel USSD')
+        $name = $this->record->name;
+
+        $this->menu->text('Welcome To Laravel USSD')
             ->lineBreak(2)
             ->line('Select an option')
             ->listing([
@@ -103,18 +160,18 @@ class Welcome extends State
 }
 ```
 
-### Creating Decisions and Linking them with States
+### Linking States with Decisions
 
 Add your decision to the afterRendering method and link them with states
 
 ``` php
 <?php
 
-namespace App\Http\Ussd;
+namespace App\Http\Ussd\States;
 
-use App\Http\Ussd\GetRecipientNumber;
-use App\Http\Ussd\MaintenanceMode;
-use App\Http\Ussd\Error;
+use App\Http\Ussd\States\GetRecipientNumber;
+use App\Http\Ussd\States\MaintenanceMode;
+use App\Http\Ussd\States\Error;
 use Sparors\Ussd\State;
 
 class Welcome extends State
@@ -155,11 +212,11 @@ Import the welcome state class and pass it to the setInitialState method
 namespace App\Http\Controllers;
 
 use Sparors\Ussd\Facades\Ussd;
-use App\Http\Ussd\Welcome;
+use App\Http\Ussd\States\Welcome;
 
 class UssdController extends Controller
 {
-	public function index()
+    public function index()
 	{
         $ussd = Ussd::machine()
             ->setFromRequest([

@@ -6,9 +6,7 @@ Contributions are accepted via Pull Requests on [Github](https://github.com/spar
 
 # Things you could do
 If you want to contribute but do not know where to start, this list provides some starting points.
-- Add license text
-- Remove rewriteRules.php
-- Set up TravisCI, StyleCI, ScrutinizerCI
+- Set up TravisCI
 - Write a comprehensive ReadMe
 
 ## Pull Requests

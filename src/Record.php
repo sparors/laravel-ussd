@@ -149,6 +149,32 @@ class Record
     }
 
     /**
+     * Increment the value of an item in the cache.
+     * 
+     * @since v1.1.0
+     * @param  string  $key
+     * @param  mixed  $value
+     * @return int|bool
+     */
+    public function increment($key, $value = 1)
+    {
+        return $this->cache->increment($this->getKey($key), $value);
+    }
+
+    /**
+     * Decrement the value of an item in the cache.
+     *
+     * @since v1.1.0
+     * @param  string  $key
+     * @param  mixed  $value
+     * @return int|bool
+     */
+    public function decrement($key, $value = 1)
+    {
+        return $this->cache->decrement($this->getKey($key), $value);
+    }
+
+    /**
      * Remove all items from the cache.
      *
      * @return bool
