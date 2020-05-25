@@ -69,6 +69,8 @@ class Welcome extends State
 
 ### Creating Actions
 
+> Available from **v1.1.0**
+
 We provide a ussd artisan command which allows you to quickly create new actions.
 
 ``` bash
@@ -101,6 +103,8 @@ Run you logic and return the next state fully qualified class name
 namespace App\Http\Ussd\Actions;
 
 use Sparors\Ussd\Action;
+use App\Http\Ussd\States\PaymentSuccess;
+use App\Http\Ussd\States\PaymentError;
 
 class MakePayment extends Action
 {
@@ -125,7 +129,7 @@ Add your menu to the beforeRendering method
 ``` php
 <?php
 
-namespace App\Http\Ussd;
+namespace App\Http\Ussd\States;
 
 use Sparors\Ussd\State;
 
@@ -163,11 +167,11 @@ Add your decision to the afterRendering method and link them with states
 ``` php
 <?php
 
-namespace App\Http\Ussd;
+namespace App\Http\Ussd\States;
 
-use App\Http\Ussd\GetRecipientNumber;
-use App\Http\Ussd\MaintenanceMode;
-use App\Http\Ussd\Error;
+use App\Http\Ussd\States\GetRecipientNumber;
+use App\Http\Ussd\States\MaintenanceMode;
+use App\Http\Ussd\States\Error;
 use Sparors\Ussd\State;
 
 class Welcome extends State
@@ -208,11 +212,11 @@ Import the welcome state class and pass it to the setInitialState method
 namespace App\Http\Controllers;
 
 use Sparors\Ussd\Facades\Ussd;
-use App\Http\Ussd\Welcome;
+use App\Http\Ussd\States\Welcome;
 
 class UssdController extends Controller
 {
-	public function index()
+    public function index()
 	{
         $ussd = Ussd::machine()
             ->setFromRequest([
