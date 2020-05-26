@@ -4,6 +4,10 @@ All notable changes to `laravel Ussd` will be documented in this file.
 
 ## [Unreleased]
 
+## [v2.1.0] - 2020-05-26
+### Change
+- Initial State method of machine can accept action
+
 ## [v2.0.0] - 2020-05-24
 ### Added
 - Action class to run application logics
@@ -42,7 +46,8 @@ All notable changes to `laravel Ussd` will be documented in this file.
 - Ussd config to allow developers customize behaviour
 - Ussd service Provider class to allow laravel know how to integrate the package
 
-[Unreleased]: ../../compare/v1.1.0...HEAD
-[v2.0.0]: ../../compare/v1.0.0...v1.1.0
+[Unreleased]: ../../compare/v2.1.0...HEAD
+[v2.1.0]: ../../compare/v2.0.0...v2.1.0
+[v2.0.0]: ../../compare/v1.0.0...v2.0.0
 [v1.0.0]: ../../compare/v0.1.0...v1.0.0
 [v0.1.0]: ../../releases/tag/v0.1.0
