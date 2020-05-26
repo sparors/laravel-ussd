@@ -151,7 +151,7 @@ class Record
     /**
      * Increment the value of an item in the cache.
      * 
-     * @since v1.1.0
+     * @since v2.0.0
      * @param  string  $key
      * @param  mixed  $value
      * @return int|bool
@@ -164,7 +164,7 @@ class Record
     /**
      * Decrement the value of an item in the cache.
      *
-     * @since v1.1.0
+     * @since v2.0.0
      * @param  string  $key
      * @param  mixed  $value
      * @return int|bool
