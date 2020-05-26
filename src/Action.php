@@ -2,7 +2,7 @@
 
 namespace Sparors\Ussd;
 
-/** @since v1.1.0 */
+/** @since v2.0.0 */
 abstract class Action
 {
     /** @var Record */
