@@ -69,7 +69,7 @@ class Welcome extends State
 
 ### Creating Actions
 
-> Available from **v1.1.0**
+> Available from **v2.0.0**
 
 We provide a ussd artisan command which allows you to quickly create new actions.
 
