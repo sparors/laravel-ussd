@@ -217,7 +217,7 @@ use App\Http\Ussd\States\Welcome;
 class UssdController extends Controller
 {
     public function index()
-	{
+    {
         $ussd = Ussd::machine()
             ->setFromRequest([
                 'network',
@@ -237,7 +237,7 @@ class UssdController extends Controller
             });
 
 	    return response()->json($ussd->run());
-	}
+    }
 }
 ```
 
