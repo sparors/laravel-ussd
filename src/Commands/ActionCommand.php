@@ -4,7 +4,7 @@ namespace Sparors\Ussd\Commands;
 
 use Illuminate\Support\Facades\File;
 
-/** @since v1.1.0 */
+/** @since v2.0.0 */
 class ActionCommand extends GenerateCommand
 {
     /**
