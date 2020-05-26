@@ -73,46 +73,30 @@ class Machine
             $activeClass->setRecord($this->record);
 
             $state = $activeClass->next($this->input);
-            
-            $this->ensureClassExist(
+
+            $this->processAction(
+                $stateClass,
                 $state,
                 'Continuing State Class needs to be set before ussd '
                 . 'machine can run. It may be that your session has ended.'
             );
-
-            $stateClass = new $state;
-            $stateClass->setRecord($this->record);
-
-            if (is_subclass_of($stateClass, Action::class)) {
-                $state = $stateClass->run();
-
-                $this->ensureClassExist(
-                    $state,
-                    'Ussd Action Class needs to return next State Class'
-                );
-
-                $stateClass = new $state;
-                $stateClass->setRecord($this->record);
-
-            }
             
             $this->record->set('__active', $state);
         } else {
             
             $this->processInitialState();
 
-            $this->ensureClassExist(
-                $this->initialState,
+            $state = $this->initialState;
+
+            $this->processAction(
+                $stateClass,
+                $state,
                 'Initial State Class needs to be set before'
-                . ' ussd machine can run.'
+            . ' ussd machine can run.'
             );
 
             $this->record->set('__active', $this->initialState);
             $this->record->set('__init', true);
-
-
-            $stateClass = new $this->initialState;
-            $stateClass->setRecord($this->record);
         }
 
         return ($this->response)($stateClass->render(), $stateClass->getAction());
@@ -162,6 +146,29 @@ class Machine
     {
         if (is_callable($this->initialState)) {
             $this->initialState = ($this->initialState)();
+        }
+    }
+
+    protected function processAction(&$stateClass, &$state, $exception): void
+    {
+        $this->ensureClassExist(
+            $state,
+            $exception
+        );            
+        
+        $stateClass = new $state;
+        $stateClass->setRecord($this->record);
+
+        if (is_subclass_of($stateClass, Action::class)) {
+            $state = $stateClass->run();
+
+            $this->ensureClassExist(
+                $state,
+                'Ussd Action Class needs to return next State Class'
+            );
+
+            $stateClass = new $state;
+            $stateClass->setRecord($this->record);
         }
     }
 }
