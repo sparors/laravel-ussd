@@ -102,14 +102,14 @@ class Machine
         return ($this->response)($stateClass->render(), $stateClass->getAction());
     }
 
-    private function saveParameter(string $key, $value)
+    protected function saveParameter(string $key, $value)
     {
         if (!is_null($value)) {
             $this->record->set($key, $value);
         }
     }
 
-    private function saveParameters()
+    protected function saveParameters()
     {
         $this->saveParameter('sessionId', $this->sessionId);
         $this->saveParameter('phoneNumber', $this->phoneNumber);
@@ -120,7 +120,7 @@ class Machine
     /**
      * @throws Exception
      */
-    private function ensureClassExist(?string $class, string $message): void
+    protected function ensureClassExist(?string $class, string $message): void
     {
         throw_if(
             !class_exists($class),
@@ -132,7 +132,7 @@ class Machine
     /**
      * @throws Exception
      */
-    private function ensureSessionIdIsSet(?string $session): void
+    protected function ensureSessionIdIsSet(?string $session): void
     {
         throw_if(
             is_null($session),
@@ -142,7 +142,7 @@ class Machine
     }
 
 
-    private function processInitialState(): void
+    protected function processInitialState(): void
     {
         if (is_callable($this->initialState)) {
             $this->initialState = ($this->initialState)();

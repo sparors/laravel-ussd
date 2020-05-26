@@ -7,6 +7,7 @@ All notable changes to `laravel Ussd` will be documented in this file.
 ## [v2.1.0] - 2020-05-26
 ### Change
 - Initial State method of machine can accept action
+- All internal private methods to protected
 
 ## [v2.0.0] - 2020-05-24
 ### Added

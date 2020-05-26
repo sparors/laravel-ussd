@@ -31,7 +31,7 @@ class Menu
         $this->menu = $menu;
     }
 
-    private function numberingFor(int $index, string $numbering): string
+    protected function numberingFor(int $index, string $numbering): string
     {
         if ($numbering === self::NUMBERING_ALPHABETIC_LOWER) {
             return range('a','z')[$index];
@@ -45,7 +45,7 @@ class Menu
         return '';
     }
 
-    private function isLastPage(
+    protected function isLastPage(
         int $page,
         int $numberPerPage,
         array $items
@@ -54,12 +54,12 @@ class Menu
     }
 
 
-    private function pageStartIndex(int $page, int $numberPerPage): int
+    protected function pageStartIndex(int $page, int $numberPerPage): int
     {
         return $page * $numberPerPage - $numberPerPage;
     }
 
-    private function pageLimit(int $page, int $numberPerPage, array $items): int
+    protected function pageLimit(int $page, int $numberPerPage, array $items): int
     {
         return (
             $this->isLastPage($page, $numberPerPage, $items)

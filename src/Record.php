@@ -22,7 +22,7 @@ class Record
      * @param string $key
      * @return string
      */
-    private function getKey($key)
+    protected function getKey($key)
     {
         return "ussd_$this->id.$key";
     }
@@ -31,7 +31,7 @@ class Record
      * @param int $ttl
      * @return \DateTimeInterface|\DateInterval|int|null
      */
-    private function getTtl($ttl)
+    protected function getTtl($ttl)
     {
         return $ttl ?? config('ussd.cache_ttl');
     }
@@ -40,7 +40,7 @@ class Record
      * @param array $keys
      * @return array
      */
-    private function getKeys($keys)
+    protected function getKeys($keys)
     {
         return array_map(
             function ($key) { return $this->getKey($key); },
@@ -52,7 +52,7 @@ class Record
      * @param array $values
      * @return array
      */
-    private function getValues($values)
+    protected function getValues($values)
     {
         $newValues = array();
         foreach($values as $key => $value) {
