@@ -95,7 +95,7 @@ class MakePayment extends Action
 }
 ```
 
-Run you logic and return the next state fully qualified class name
+Run your logic and return the next state's fully qualified class name
 
 ``` php
 <?php
