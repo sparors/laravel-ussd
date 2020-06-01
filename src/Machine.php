@@ -95,7 +95,7 @@ class Machine
             . ' ussd machine can run.'
             );
 
-            $this->record->set('__active', $this->initialState);
+            $this->record->set('__active', $state);
             $this->record->set('__init', true);
         }
 
