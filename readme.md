@@ -216,25 +216,25 @@ use App\Http\Ussd\States\Welcome;
 
 class UssdController extends Controller
 {
-    public function index()
-    {
-        $ussd = Ussd::machine()
-            ->setFromRequest([
-                'network',
-                'phone_number' => 'msisdn',
-                'sessionId' => 'UserSessionID',
-                'input' => 'msg'
-            ])
-            ->setInitialState(Welcome::class)
-            ->setResponse(function (string $message, string $action) {
-                return [
-                    'USSDResp' => [
-                        'action' => $acion,
-                        'menus' => '',
-                        'title' => $message,
-                    ]
-                ];
-            });
+	public function index()
+	{
+      $ussd = Ussd::machine()
+      ->setFromRequest([
+          'network',
+          'phone_number' => 'msisdn',
+          'sessionId' => 'UserSessionID',
+          'input' => 'msg'
+      ])
+      ->setInitialState(Welcome::class)
+      ->setResponse(function (string $message, string $action) {
+          return [
+              'USSDResp' => [
+                  'action' => $action,
+                  'menus' => '',
+                  'title' => $message
+              ]
+          ];
+      });
 
 	    return response()->json($ussd->run());
     }
