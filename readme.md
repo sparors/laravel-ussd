@@ -161,7 +161,7 @@ class UssdController extends Controller
 {
 	public function index()
 	{
-        $ussd = Ussd::machine()
+            $ussd = Ussd::machine()
             ->setFromRequest([
                 'network',
                 'phone_number' => 'msisdn',
@@ -172,9 +172,9 @@ class UssdController extends Controller
             ->setResponse(function (string $message, string $action) {
                 return [
                     'USSDResp' => [
-                        'action' => $acion,
+                        'action' => $action,
                         'menus' => '',
-                        'title' => $message,
+                        'title' => $message
                     ]
                 ];
             });
