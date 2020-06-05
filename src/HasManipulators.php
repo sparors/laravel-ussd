@@ -21,7 +21,7 @@ trait HasManipulators
         return $this;
     }
 
-    public function setPhoneNumber(string $phoneNumber)
+    public function setPhoneNumber(?string $phoneNumber)
     {
         $this->phoneNumber = $phoneNumber;
 
@@ -35,7 +35,7 @@ trait HasManipulators
         return $this;
     }
 
-    public function setNetwork(string $network)
+    public function setNetwork(?string $network)
     {
         $this->network = $network;
 
@@ -48,7 +48,7 @@ trait HasManipulators
         return $this;
     }
 
-    public function setInput(string $input)
+    public function setInput(?string $input)
     {
         $this->input = $input;
 
@@ -62,7 +62,7 @@ trait HasManipulators
         return $this;
     }
 
-    public function setStore(string $store)
+    public function setStore(?string $store)
     {
         $this->store = $store;
 

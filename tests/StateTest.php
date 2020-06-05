@@ -3,7 +3,6 @@
 namespace Sparors\Ussd\Tests;
 
 use Orchestra\Testbench\TestCase;
-use Sparors\Ussd\State;
 
 class StateTest extends TestCase
 {
@@ -12,6 +11,6 @@ class StateTest extends TestCase
         $hello = new HelloState();
         $this->assertEquals('Hello World', $hello->render());
 
-        $this->assertEquals(ByeState::class, $hello->next('1'));
+        $this->assertEquals(RunAction::class, $hello->next('1'));
     }
 }

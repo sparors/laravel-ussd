@@ -3,6 +3,7 @@
 namespace Sparors\Ussd;
 
 use Illuminate\Support\ServiceProvider;
+use Sparors\Ussd\Commands\ActionCommand;
 use Sparors\Ussd\Commands\StateCommand;
 
 class UssdServiceProvider extends ServiceProvider
@@ -60,7 +61,7 @@ class UssdServiceProvider extends ServiceProvider
         // Publishing the configuration file.
         $this->publishes([
             __DIR__.'/../config/ussd.php' => config_path('ussd.php'),
-        ], 'config');
+        ], 'ussd-config');
 
         // Publishing the views.
         /*$this->publishes([
@@ -80,6 +81,7 @@ class UssdServiceProvider extends ServiceProvider
         // Registering package commands.
         $this->commands([
             StateCommand::class,
+            ActionCommand::class,
         ]);
     }
 }

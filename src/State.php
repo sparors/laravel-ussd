@@ -49,7 +49,7 @@ abstract class State
     /**
      * The new State full path
      */
-    public function next(string $input): ?string
+    public function next(?string $input): ?string
     {
         $this->decision = new Decision($input);
         $this->afterRendering($input);

@@ -4,6 +4,7 @@ namespace Sparors\Ussd\Tests;
 
 use Sparors\Ussd\State;
 
+/** @internal */
 class ByeState extends State
 {
     protected $action = self::PROMPT;

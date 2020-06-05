@@ -20,18 +20,18 @@ class Decision
         $this->output = null;
     }
 
-    private function guardAgainstReDeciding(): bool
+    protected function guardAgainstReDeciding(): bool
     {
         return !$this->decided;
     }
 
-    private function setOutput($output): void
+    protected function setOutput($output): void
     {
         $this->output = $output;
         $this->decided = true;
     }
 
-    private function setOutputForCondition($condition, $output): self
+    protected function setOutputForCondition($condition, $output): self
     {
         if ($this->guardAgainstReDeciding()) {
             if ($condition()) {

@@ -1,0 +1,13 @@
+<?php
+
+namespace [namespace];
+
+use Sparors\Ussd\Action;
+
+class [class] extends Action
+{
+    public function run(): string
+    {
+        return ''; // The state after this
+    }
+}
