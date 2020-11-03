@@ -117,6 +117,7 @@ class MakePayment extends Action
         if ($response->ok()) {
             return PaymentSuccess::class;
         }
+	
         return PaymentError::class;
     }
 }
@@ -149,8 +150,8 @@ class Welcome extends State
                 'ECG/GWCL',
                 'Talk To Us'
             ])
-            ->lineBreak(2);
-            ->text('Powered by Sparors')
+            ->lineBreak(2)
+            ->text('Powered by Sparors');
     }
 
     protected function afterRendering(string $argument): void
@@ -188,8 +189,8 @@ class Welcome extends State
                 'ECG/GWCL',
                 'Talk To Us'
             ])
-            ->lineBreak(2);
-            ->text('Powered by Sparors')
+            ->lineBreak(2)
+            ->text('Powered by Sparors');
     }
 
     protected function afterRendering(string $argument): void
