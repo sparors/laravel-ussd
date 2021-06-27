@@ -113,11 +113,11 @@ class MakePayment extends Action
         $response = Http::post('/payment', [
             'phone_number' => $this->record->phoneNumber
         ]);
-        
+
         if ($response->ok()) {
             return PaymentSuccess::class;
         }
-	
+
         return PaymentError::class;
     }
 }

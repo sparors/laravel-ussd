@@ -16,7 +16,4 @@ before_script:
   - travis_retry composer update --no-interaction --prefer-dist
 
 script:
-  - vendor/bin/phpunit --coverage-clover coverage.xml
-
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+  - vendor/bin/phpunit
