@@ -8,7 +8,7 @@ class Ussd
 {
     /**
      * An instance on Application
-     * 
+     *
      * @var \Illuminate\Contracts\Foundation\Application
      */
     protected $app;
@@ -16,25 +16,6 @@ class Ussd
     public function __construct($app)
     {
         $this->app = $app;
-    }
-
-    /**
-     * @param string $id;
-     * @param string $store
-     * @return Record
-     */
-    public function record(string $id, string $store = null)
-    {
-        return new Record(Cache::store($store), $id);
-    }
-
-    /**
-     * @param string $menu
-     * @return Menu
-     */
-    public function menu(string $menu = '')
-    {
-        return new Menu($menu);
     }
 
     /**

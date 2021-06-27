@@ -2,7 +2,6 @@
 
 namespace Sparors\Ussd\Tests;
 
-use Illuminate\Support\Facades\Request;
 use Orchestra\Testbench\TestCase;
 use Sparors\Ussd\Decision;
 use Sparors\Ussd\HasManipulators;
@@ -10,7 +9,7 @@ use Sparors\Ussd\Record;
 
 class HasManipulatorsTest extends TestCase
 {
-    public function testSetSessionId()
+    public function test_it_sets_session_id()
     {
         /** @var \Sparors\Ussd\HasManipulators */
         $manipulator = $this->getMockForTrait(HasManipulators::class);
@@ -18,7 +17,7 @@ class HasManipulatorsTest extends TestCase
         $this->assertEquals('1234', $manipulator->sessionId);
     }
 
-    public function testSetSessionIdFromRequest()
+    public function test_it_sets_session_id_from_request()
     {
         request()->merge(['session_id' => '1234']);
         /** @var \Sparors\Ussd\HasManipulators */
@@ -27,7 +26,7 @@ class HasManipulatorsTest extends TestCase
         $this->assertEquals('1234', $manipulator->sessionId);
     }
 
-    public function testSetPhoneNumber()
+    public function test_it_sets_phone_number()
     {
         /** @var \Sparors\Ussd\HasManipulators */
         $manipulator = $this->getMockForTrait(HasManipulators::class);
@@ -35,7 +34,7 @@ class HasManipulatorsTest extends TestCase
         $this->assertEquals('0545112466', $manipulator->phoneNumber);
     }
 
-    public function testSetPhoneNumberFromRequest()
+    public function test_it_sets_phone_number_from_request()
     {
         request()->merge(['phone_number' => '0545112466']);
         /** @var \Sparors\Ussd\HasManipulators */
@@ -44,7 +43,7 @@ class HasManipulatorsTest extends TestCase
         $this->assertEquals('0545112466', $manipulator->phoneNumber);
     }
 
-    public function testSetNetwork()
+    public function test_it_sets_network()
     {
         /** @var \Sparors\Ussd\HasManipulators */
         $manipulator = $this->getMockForTrait(HasManipulators::class);
@@ -52,7 +51,7 @@ class HasManipulatorsTest extends TestCase
         $this->assertEquals('MTN', $manipulator->network);
     }
 
-    public function testSetNetworkFromRequest()
+    public function test_it_sets_network_from_request()
     {
         request()->merge(['network' => 'MTN']);
         /** @var \Sparors\Ussd\HasManipulators */
@@ -61,7 +60,7 @@ class HasManipulatorsTest extends TestCase
         $this->assertEquals('MTN', $manipulator->network);
     }
 
-    public function testSetInput()
+    public function test_it_sets_input()
     {
         /** @var \Sparors\Ussd\HasManipulators */
         $manipulator = $this->getMockForTrait(HasManipulators::class);
@@ -69,16 +68,16 @@ class HasManipulatorsTest extends TestCase
         $this->assertEquals('1', $manipulator->input);
     }
 
-    public function testSetInputFromRequest()
+    public function test_it_sets_input_from_request()
     {
         request()->merge(['input' => '1']);
         /** @var \Sparors\Ussd\HasManipulators */
         $manipulator = $this->getMockForTrait(HasManipulators::class);
-        $manipulator->setSessionIdFromRequest('input');
-        $this->assertEquals('1', $manipulator->sessionId);
+        $manipulator->setInputFromRequest('input');
+        $this->assertEquals('1', $manipulator->input);
     }
 
-    public function testSetStore()
+    public function test_it_sets_store()
     {
         /** @var \Sparors\Ussd\HasManipulators */
         $manipulator = $this->getMockForTrait(HasManipulators::class);
@@ -86,7 +85,7 @@ class HasManipulatorsTest extends TestCase
         $this->assertEquals('redis', $manipulator->store);
     }
 
-    public function testSet()
+    public function test_set_multiple_values_at_once()
     {
         /** @var \Sparors\Ussd\HasManipulators */
         $manipulator = $this->getMockForTrait(HasManipulators::class);
@@ -104,7 +103,7 @@ class HasManipulatorsTest extends TestCase
         $this->assertEquals('0545112466', $manipulator->phoneNumber);
     }
 
-    public function testSetFromRequest()
+    public function test_set_multiple_values_at_once_from_request()
     {
         request()->merge([
             'op_network' => 'MTN',
@@ -127,7 +126,7 @@ class HasManipulatorsTest extends TestCase
         $this->assertEquals('0545112466', $manipulator->phoneNumber);
     }
 
-    public function testSetInitialStateCanTakeString()
+    public function test_it_sets_initial_state_with_string_of_classname()
     {
         /** @var \Sparors\Ussd\HasManipulators */
         $manipulator = $this->getMockForTrait(HasManipulators::class);
@@ -135,7 +134,7 @@ class HasManipulatorsTest extends TestCase
         $this->assertEquals('Sparors\Ussd\Record', $manipulator->initialState);
     }
 
-    public function testSetInitialStateCanTakeClassInstance()
+    public function test_it_sets_initial_state_with_class_instance()
     {
         /** @var \Sparors\Ussd\HasManipulators */
         $manipulator = $this->getMockForTrait(HasManipulators::class);
@@ -144,7 +143,15 @@ class HasManipulatorsTest extends TestCase
         $this->assertEquals('Sparors\Ussd\Decision', $manipulator->initialState);
     }
 
-    public function testSetResponse()
+    public function test_it_sets_initial_state_to_null_if_state_is_invalid()
+    {
+        /** @var \Sparors\Ussd\HasManipulators */
+        $manipulator = $this->getMockForTrait(HasManipulators::class);
+        $manipulator->setInitialState(1);
+        $this->assertNull($manipulator->initialState);
+    }
+
+    public function test_it_set_response_formatting()
     {
         /** @var \Sparors\Ussd\HasManipulators */
         $manipulator = $this->getMockForTrait(HasManipulators::class);

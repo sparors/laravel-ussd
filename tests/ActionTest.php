@@ -2,13 +2,12 @@
 
 namespace Sparors\Ussd\Tests;
 
-use Orchestra\Testbench\TestCase;
-use Sparors\Ussd\State;
+use PHPUnit\Framework\TestCase;
 
-/** @internal */
+
 class ActionTest extends TestCase
 {
-    public function testAction()
+    public function test_it_runs_successfully()
     {
         $action = new RunAction();
         $this->assertEquals(ByeState::class, $action->run());

@@ -2,25 +2,12 @@
 
 namespace Sparors\Ussd\Tests\Commands;
 
+use Sparors\Ussd\Tests\TestCase;
 use Illuminate\Support\Facades\File;
-use Orchestra\Testbench\TestCase;
-use Sparors\Ussd\UssdServiceProvider;
 
-class TestStateCommand extends TestCase
+class StateCommandTest extends TestCase
 {
-    /**
-     * Tell Testbench to use this package.
-     *
-     * @param $app
-     *
-     * @return array
-     */
-    public function getPackageProviders($app)
-    {
-        return [UssdServiceProvider::class];
-    }
-    
-    public function testItPrintOutSuccessWhenClassDoesNotExists()
+    public function test_it_print_out_success_when_class_does_not_exists()
     {
         File::shouldReceive('exists')->once()->andReturn(false);
         File::shouldReceive('isDirectory')->once();
@@ -31,7 +18,7 @@ class TestStateCommand extends TestCase
             ->assertExitCode(0);
     }
 
-    public function testItPrintOutErrorWhenClassExists()
+    public function test_it_print_out_error_when_class_exists()
     {
         File::shouldReceive('exists')->once()->andReturn(true);
         $this->artisan('ussd:state', ['name' => 'welcome'])

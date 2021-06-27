@@ -9,7 +9,7 @@ class Decision
 
     /** @var mixed */
     protected $argument;
-    
+
     /** @var string|null */
     protected $output;
 
@@ -127,7 +127,7 @@ class Decision
     {
         return $this->setOutputForCondition(
             function () use ($array, $strict) {
-                return in_array($array, $this->argument, $strict);
+                return in_array($this->argument, $array, $strict);
             },
             $output
         );
@@ -135,10 +135,10 @@ class Decision
 
     public function custom(callable $function, string $output): self
     {
-        $func = function () use ($function) { 
+        $func = function () use ($function) {
             return $function($this->argument);
         };
-        
+
         return $this->setOutputForCondition($func, $output);
     }
 
