@@ -5,11 +5,15 @@ All notable changes to `laravel Ussd` will be documented in this file.
 ## [Unreleased]
 
 ## [v2.3.0] - 2021-06-27
+### Added
+- Add missen test to improve coverage
+### Change
 - Minor bug fixes
 - Upgrade test dependencies
-- Add missen test to improve coverage
+
 
 ## [v2.2.0] - 2020-09-11
+### Added
 - Add Support for laravel 8
 
 ## [v2.1.0] - 2020-05-26
