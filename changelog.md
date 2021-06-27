@@ -55,7 +55,8 @@ All notable changes to `laravel Ussd` will be documented in this file.
 - Ussd config to allow developers customize behaviour
 - Ussd service Provider class to allow laravel know how to integrate the package
 
-[Unreleased]: ../../compare/v2.2.0...HEAD
+[Unreleased]: ../../compare/v2.3.0...HEAD
+[v2.3.0]: ../../compare/v2.2.0...v2.3.0
 [v2.2.0]: ../../compare/v2.1.0...v2.2.0
 [v2.1.0]: ../../compare/v2.0.0...v2.1.0
 [v2.0.0]: ../../compare/v1.0.0...v2.0.0
