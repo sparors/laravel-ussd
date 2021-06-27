@@ -4,6 +4,7 @@ php:
   - '7.2'
   - '7.3'
   - '7.4'
+  - '8.0'
 
 sudo: false
 
@@ -16,4 +17,7 @@ before_script:
   - travis_retry composer update --no-interaction --prefer-dist
 
 script:
-  - vendor/bin/phpunit
+  - vendor/bin/phpunit --coverage-clover coverage.xml
+
+after_script:
+  - bash <(curl -s https://codecov.io/bash)

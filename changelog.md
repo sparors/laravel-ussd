@@ -4,6 +4,12 @@ All notable changes to `laravel Ussd` will be documented in this file.
 
 ## [Unreleased]
 
+## [v2.3.0] - 2021-06-27
+- Minor bug fixes
+- Upgrade test dependencies
+- Add missen test to improve coverage
+- Add Test coverage
+
 ## [v2.2.0] - 2020-09-11
 - Add Support for laravel 8
 
@@ -35,7 +41,7 @@ All notable changes to `laravel Ussd` will be documented in this file.
 - Updated Readme
 - Updated changelog
 
-## [v0.1.0] - 2020-05-02 
+## [v0.1.0] - 2020-05-02
 ### Added
 - Ussd Package Project with README, contributing, changelog, license, etc.
 - State class to define what should occur at various stages when user navigates

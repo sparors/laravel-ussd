@@ -5,7 +5,7 @@ namespace Sparors\Ussd;
 class Menu
 {
     const NUMBERING_ALPHABETIC_LOWER = 'alphabetic_lower';
-    const NUMBERING_ALPHABETIC_UPPER = 'alphabetic_lower';
+    const NUMBERING_ALPHABETIC_UPPER = 'alphabetic_upper';
     const NUMBERING_EMPTY = 'empty';
     const NUMBERING_NUMERIC = 'numeric';
 
