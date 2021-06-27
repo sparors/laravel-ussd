@@ -2,19 +2,18 @@
 
 namespace Sparors\Ussd\Tests;
 
-use Sparors\Ussd\State;
 use Sparors\Ussd\Machine;
 use Orchestra\Testbench\TestCase;
 
 class MachineTest extends TestCase
 {
-    public function testRun()
+    public function test_it_runs_successfully()
     {
         $machine = (new Machine())->setSessionId('1234')
             ->setInput('1')
             ->setInitialState(HelloState::class)
             ->setStore('array');
-        
+
         $this->assertEquals(
             [
                 'message' => 'Hello World',
@@ -34,7 +33,7 @@ class MachineTest extends TestCase
         );
     }
 
-    public function testInitialStateCanBeACallable()
+    public function test_initial_state_can_be_a_callable()
     {
         $machine = (new Machine())->setSessionId('1234')
             ->setInput('1')
@@ -42,7 +41,7 @@ class MachineTest extends TestCase
                 return HelloState::class;
             })
             ->setStore('array');
-        
+
         $this->assertEquals(
             [
                 'message' => 'Hello World',

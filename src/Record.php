@@ -37,6 +37,15 @@ class Record
     }
 
     /**
+     * @param string $default
+     * @return mixed
+     */
+    protected function getDefault($default)
+    {
+        return $default ?? config('ussd.cache_default');
+    }
+
+    /**
      * @param array $keys
      * @return array
      */
@@ -83,7 +92,7 @@ class Record
      */
     public function set($key, $value, $ttl = null)
     {
-        return $this->cache->set($this->getKey($key), $value, $ttl);
+        return $this->cache->set($this->getKey($key), $value, $this->getTtl($ttl));
     }
 
     /**
@@ -95,7 +104,7 @@ class Record
      */
     public function setMultiple($values, $ttl = null)
     {
-        return $this->cache->setMultiple($this->getValues($values), $ttl);
+        return $this->cache->setMultiple($this->getValues($values), $this->getTtl($ttl));
     }
 
     /**
@@ -107,7 +116,7 @@ class Record
      */
     public function get($key, $default = null)
     {
-        return $this->cache->get($this->getKey($key), $default);
+        return $this->cache->get($this->getKey($key), $this->getDefault($default));
     }
 
     /**
@@ -122,7 +131,7 @@ class Record
     public function getMultiple($keys, $default = null)
     {
         return array_values(
-            (array)$this->cache->getMultiple($this->getKeys($keys), $default)
+            (array)$this->cache->getMultiple($this->getKeys($keys), $this->getDefault($default))
         );
     }
 
@@ -150,7 +159,7 @@ class Record
 
     /**
      * Increment the value of an item in the cache.
-     * 
+     *
      * @since v2.0.0
      * @param  string  $key
      * @param  mixed  $value
@@ -209,7 +218,7 @@ class Record
         if (is_string($argument)) {
             return $this->get($argument, config('ussd.cache_default'));
         }
-        
+
         if (is_array($argument)) {
             $this->setMultiple($argument, config('ussd.cache_ttl'));
         }
