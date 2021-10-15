@@ -18,7 +18,7 @@ class Machine
 
     /** @var Record */
     protected $record;
-    
+
     /** @var string|null */
     protected $sessionId;
 
@@ -52,7 +52,7 @@ class Machine
     public function run()
     {
         $this->ensureSessionIdIsSet($this->sessionId);
-        
+
         $this->record = new Record(
             Cache::store($this->store),
             $this->sessionId
@@ -64,12 +64,12 @@ class Machine
             $active = $this->record->get('__active');
 
             $this->ensureClassExist(
-                $active, 
+                $active,
                 'Active State Class needs to be set before ussd machine can'
                 . ' run. It may be that your session has ended.'
             );
 
-            $activeClass = new $active;
+            $activeClass = new $active();
             $activeClass->setRecord($this->record);
 
             $state = $activeClass->next($this->input);
@@ -80,10 +80,9 @@ class Machine
                 'Continuing State Class needs to be set before ussd '
                 . 'machine can run. It may be that your session has ended.'
             );
-            
+
             $this->record->set('__active', $state);
         } else {
-            
             $this->processInitialState();
 
             $state = $this->initialState;
@@ -154,9 +153,9 @@ class Machine
         $this->ensureClassExist(
             $state,
             $exception
-        );            
-        
-        $stateClass = new $state;
+        );
+
+        $stateClass = new $state();
         $stateClass->setRecord($this->record);
 
         if (is_subclass_of($stateClass, Action::class)) {
@@ -167,7 +166,7 @@ class Machine
                 'Ussd Action Class needs to return next State Class'
             );
 
-            $stateClass = new $state;
+            $stateClass = new $state();
             $stateClass->setRecord($this->record);
         }
     }

@@ -16,6 +16,5 @@ class ByeState extends State
 
     public function afterRendering(string $argument): void
     {
-
     }
 }

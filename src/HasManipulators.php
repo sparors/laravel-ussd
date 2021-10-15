@@ -71,7 +71,7 @@ trait HasManipulators
 
     public function set(array $parameters)
     {
-        foreach($parameters as $property => $value) {
+        foreach ($parameters as $property => $value) {
             $property = Str::camel($property);
             if (property_exists($this, $property)) {
                 $this->$property = $value;
@@ -83,7 +83,7 @@ trait HasManipulators
 
     public function setFromRequest(array $parameters)
     {
-        foreach($parameters as $property => $key) {
+        foreach ($parameters as $property => $key) {
             $property = Str::camel($property);
             if (property_exists($this, $property)) {
                 $this->$property = request($key);
@@ -106,7 +106,7 @@ trait HasManipulators
         } else {
             $this->initialState = null;
         }
-        
+
         return $this;
     }
 
