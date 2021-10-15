@@ -15,11 +15,6 @@ class UssdServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'sparors');
-        // $this->loadViewsFrom(__DIR__.'/../resources/views', 'sparors');
-        // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-        // $this->loadRoutesFrom(__DIR__.'/routes.php');
-
         // Publishing is only necessary when using the CLI.
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
@@ -50,7 +45,7 @@ class UssdServiceProvider extends ServiceProvider
     {
         return ['ussd'];
     }
-    
+
     /**
      * Console-specific booting.
      *
@@ -62,21 +57,6 @@ class UssdServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../config/ussd.php' => config_path('ussd.php'),
         ], 'ussd-config');
-
-        // Publishing the views.
-        /*$this->publishes([
-            __DIR__.'/../resources/views' => base_path('resources/views/vendor/sparors'),
-        ], 'ussd.views');*/
-
-        // Publishing assets.
-        /*$this->publishes([
-            __DIR__.'/../resources/assets' => public_path('vendor/sparors'),
-        ], 'ussd.views');*/
-
-        // Publishing the translation files.
-        /*$this->publishes([
-            __DIR__.'/../resources/lang' => resource_path('lang/vendor/sparors'),
-        ], 'ussd.views');*/
 
         // Registering package commands.
         $this->commands([

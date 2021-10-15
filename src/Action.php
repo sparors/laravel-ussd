@@ -8,7 +8,7 @@ abstract class Action
     /** @var Record */
     protected $record;
 
-    public abstract function run(): string;
+    abstract public function run(): string;
 
     /**
      * @param Record $record

@@ -261,7 +261,7 @@ You'll find the documentation on [https://sparors.github.io/ussd-docs](https://s
 ### Testing
 
 ``` bash
-$ composer test
+$ vendor\bin\phpunit
 ```
 
 ### Change log

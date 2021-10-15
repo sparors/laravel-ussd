@@ -5,10 +5,10 @@ namespace Sparors\Ussd;
 abstract class State
 {
     /** @var int */
-    const INPUT = 'input';
+    public const INPUT = 'input';
 
     /** @var int */
-    const PROMPT = 'prompt';
+    public const PROMPT = 'prompt';
 
     /** @var string */
     protected $action = self::INPUT;
@@ -25,11 +25,11 @@ abstract class State
     /**
      * The function to run before the rendering
      */
-    protected abstract function beforeRendering(): void;
+    abstract protected function beforeRendering(): void;
 
     /**
      * The view to be displayed to users
-     * 
+     *
      * @return string
      */
     public function render(): string
@@ -41,10 +41,10 @@ abstract class State
 
     /**
      * The function to run after the rendering
-     * 
+     *
      * @param string $argument
      */
-    protected abstract function afterRendering(string $argument): void;
+    abstract protected function afterRendering(string $argument): void;
 
     /**
      * The new State full path

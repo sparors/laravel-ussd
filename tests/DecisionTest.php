@@ -63,7 +63,7 @@ class DecisionTest extends TestCase
     {
         $decision = new Decision(['active' => true]);
         $this->assertEquals('Custom', $decision
-            ->custom(function ($argument)  {
+            ->custom(function ($argument) {
                 return $argument['active'];
             }, 'Custom')->outcome());
     }

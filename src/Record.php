@@ -52,7 +52,9 @@ class Record
     protected function getKeys($keys)
     {
         return array_map(
-            function ($key) { return $this->getKey($key); },
+            function ($key) {
+                return $this->getKey($key);
+            },
             $keys
         );
     }
@@ -64,19 +66,19 @@ class Record
     protected function getValues($values)
     {
         $newValues = array();
-        foreach($values as $key => $value) {
+        foreach ($values as $key => $value) {
             $newValues[$this->getKey($key)] = $value;
         }
 
         return $newValues;
     }
 
-     /**
-     * Determine if an item exists in the cache.
-     *
-     * @param  string  $key
-     * @return bool
-     */
+    /**
+    * Determine if an item exists in the cache.
+    *
+    * @param  string  $key
+    * @return bool
+    */
     public function has($key)
     {
         return $this->cache->has($this->getKey($key));

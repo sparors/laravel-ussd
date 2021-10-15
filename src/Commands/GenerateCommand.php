@@ -11,7 +11,7 @@ class GenerateCommand extends Command
     protected function pathFromNamespace($namespace, $relativePath)
     {
         $extended_path = implode('\\', array_map(function ($value) {
-            return ucfirst($value); 
+            return ucfirst($value);
         }, explode(DIRECTORY_SEPARATOR, $relativePath)));
 
         $base_path = Str::replaceFirst(app()->getNamespace(), '', $namespace);
@@ -23,7 +23,7 @@ class GenerateCommand extends Command
     protected function classNamespace($namespace, $relativePath)
     {
         $path = array_map(function ($value) {
-            return ucfirst($value); 
+            return ucfirst($value);
         }, explode(DIRECTORY_SEPARATOR, $relativePath));
 
         array_pop($path);

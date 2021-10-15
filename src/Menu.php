@@ -4,24 +4,24 @@ namespace Sparors\Ussd;
 
 class Menu
 {
-    const NUMBERING_ALPHABETIC_LOWER = 'alphabetic_lower';
-    const NUMBERING_ALPHABETIC_UPPER = 'alphabetic_upper';
-    const NUMBERING_EMPTY = 'empty';
-    const NUMBERING_NUMERIC = 'numeric';
+    public const NUMBERING_ALPHABETIC_LOWER = 'alphabetic_lower';
+    public const NUMBERING_ALPHABETIC_UPPER = 'alphabetic_upper';
+    public const NUMBERING_EMPTY = 'empty';
+    public const NUMBERING_NUMERIC = 'numeric';
 
-    const ITEMS_SEPARATOR_NO_LINE_BREAK = "";
-    const ITEMS_SEPARATOR_LINE_BREAK = "\n";
-    const ITEMS_SEPARATOR_DOUBLE_LINE_BREAK = "\n\n";
+    public const ITEMS_SEPARATOR_NO_LINE_BREAK = "";
+    public const ITEMS_SEPARATOR_LINE_BREAK = "\n";
+    public const ITEMS_SEPARATOR_DOUBLE_LINE_BREAK = "\n\n";
 
-    const NUMBERING_SEPARATOR_NO_SPACE = "";
-    const NUMBERING_SEPARATOR_SPACE = " ";
-    const NUMBERING_SEPARATOR_DOUBLE_SPACE = "  ";
-    const NUMBERING_SEPARATOR_DOT = ".";
-    const NUMBERING_SEPARATOR_DOT_PLUS_SPACE = ". ";
-    const NUMBERING_SEPARATOR_DOT_PLUS_DOUBLE_SPACE = ".  ";
-    const NUMBERING_SEPARATOR_BRACKET = ")";
-    const NUMBERING_SEPARATOR_BRACKET_PLUS_SPACE = ") ";
-    const NUMBERING_SEPARATOR_BRACKET_PLUS_DOUBLE_SPACE = ")  ";
+    public const NUMBERING_SEPARATOR_NO_SPACE = "";
+    public const NUMBERING_SEPARATOR_SPACE = " ";
+    public const NUMBERING_SEPARATOR_DOUBLE_SPACE = "  ";
+    public const NUMBERING_SEPARATOR_DOT = ".";
+    public const NUMBERING_SEPARATOR_DOT_PLUS_SPACE = ". ";
+    public const NUMBERING_SEPARATOR_DOT_PLUS_DOUBLE_SPACE = ".  ";
+    public const NUMBERING_SEPARATOR_BRACKET = ")";
+    public const NUMBERING_SEPARATOR_BRACKET_PLUS_SPACE = ") ";
+    public const NUMBERING_SEPARATOR_BRACKET_PLUS_DOUBLE_SPACE = ")  ";
 
     /** @var string */
     protected $menu;
@@ -34,10 +34,10 @@ class Menu
     protected function numberingFor(int $index, string $numbering): string
     {
         if ($numbering === self::NUMBERING_ALPHABETIC_LOWER) {
-            return range('a','z')[$index];
+            return range('a', 'z')[$index];
         }
         if ($numbering === self::NUMBERING_ALPHABETIC_UPPER) {
-            return range('A','Z')[$index];
+            return range('A', 'Z')[$index];
         }
         if ($numbering === self::NUMBERING_NUMERIC) {
             return (string) $index + 1;
@@ -63,8 +63,8 @@ class Menu
     {
         return (
             $this->isLastPage($page, $numberPerPage, $items)
-            ? count($items) - $this->pageStartIndex($page, $numberPerPage)
-            : $numberPerPage
+                ? count($items) - $this->pageStartIndex($page, $numberPerPage)
+                : $numberPerPage
         );
     }
 
@@ -75,7 +75,7 @@ class Menu
         string $numberingSeparator,
         string $itemsSeparator,
         string $numbering
-        ): void {
+    ): void {
         $startIndex = $this->pageStartIndex($page, $numberPerPage);
         $limit = $this->pageLimit($page, $numberPerPage, $items);
         for ($i = 0; $i < $limit; $i++) {
