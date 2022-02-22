@@ -4,6 +4,12 @@ All notable changes to `laravel Ussd` will be documented in this file.
 
 ## [Unreleased]
 
+## [v2.4.0] - 2022-02-22
+
+### Added
+- Add Laravel 9 support
+- Add PHP 8.1 support
+
 ## [v2.3.1] - 2021-10-15
 
 ### Fixed
