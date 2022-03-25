@@ -65,7 +65,7 @@ class Record
      */
     protected function getValues($values)
     {
-        $newValues = array();
+        $newValues = [];
         foreach ($values as $key => $value) {
             $newValues[$this->getKey($key)] = $value;
         }
@@ -133,7 +133,7 @@ class Record
     public function getMultiple($keys, $default = null)
     {
         return array_values(
-            (array)$this->cache->getMultiple($this->getKeys($keys), $this->getDefault($default))
+            (array) $this->cache->getMultiple($this->getKeys($keys), $this->getDefault($default))
         );
     }
 
@@ -197,7 +197,7 @@ class Record
 
     public function __set($name, $value)
     {
-        $this->set($name, $value, config('ussd.cache_ttl'));
+        return $this->set($name, $value, config('ussd.cache_ttl'));
     }
 
     public function __get($name)
@@ -222,7 +222,7 @@ class Record
         }
 
         if (is_array($argument)) {
-            $this->setMultiple($argument, config('ussd.cache_ttl'));
+            return $this->setMultiple($argument, config('ussd.cache_ttl'));
         }
     }
 }

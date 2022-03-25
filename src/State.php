@@ -4,10 +4,10 @@ namespace Sparors\Ussd;
 
 abstract class State
 {
-    /** @var int */
+    /** @var string */
     public const INPUT = 'input';
 
-    /** @var int */
+    /** @var string */
     public const PROMPT = 'prompt';
 
     /** @var string */
@@ -36,6 +36,7 @@ abstract class State
     {
         $this->menu = new Menu();
         $this->beforeRendering();
+
         return $this->menu->toString();
     }
 
@@ -53,6 +54,7 @@ abstract class State
     {
         $this->decision = new Decision($input);
         $this->afterRendering($input);
+
         return $this->decision->outcome();
     }
 

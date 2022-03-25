@@ -65,8 +65,8 @@ class Machine
 
             $this->ensureClassExist(
                 $active,
-                'Active State Class needs to be set before ussd machine can'
-                . ' run. It may be that your session has ended.'
+                'Active State Class needs to be set before ussd machine can '
+                . 'run. It may be that your session has ended.'
             );
 
             $activeClass = new $active();
@@ -90,8 +90,8 @@ class Machine
             $this->processAction(
                 $stateClass,
                 $state,
-                'Initial State Class needs to be set before'
-            . ' ussd machine can run.'
+                'Initial State Class needs to be set before '
+                . 'ussd machine can run.'
             );
 
             $this->record->set('__active', $state);

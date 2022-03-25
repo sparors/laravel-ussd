@@ -2,8 +2,6 @@
 
 namespace Sparors\Ussd;
 
-use Illuminate\Support\Facades\Cache;
-
 class Ussd
 {
     /**
