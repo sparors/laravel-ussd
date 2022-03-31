@@ -65,7 +65,7 @@ class Record
      */
     protected function getValues($values)
     {
-        $newValues = array();
+        $newValues = [];
         foreach ($values as $key => $value) {
             $newValues[$this->getKey($key)] = $value;
         }
@@ -133,7 +133,7 @@ class Record
     public function getMultiple($keys, $default = null)
     {
         return array_values(
-            (array)$this->cache->getMultiple($this->getKeys($keys), $this->getDefault($default))
+            (array) $this->cache->getMultiple($this->getKeys($keys), $this->getDefault($default))
         );
     }
 

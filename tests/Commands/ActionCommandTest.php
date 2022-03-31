@@ -22,7 +22,7 @@ class ActionCommandTest extends TestCase
     {
         File::shouldReceive('exists')->once()->andReturn(true);
         $this->artisan('ussd:action', ['name' => 'save'])
-            ->expectsOutput('File Already exists !')
+            ->expectsOutput('File already exists !')
             ->assertExitCode(0);
     }
 }
