@@ -10,8 +10,8 @@ class Menu
     public const NUMBERING_NUMERIC = 'numeric';
 
     public const ITEMS_SEPARATOR_NO_LINE_BREAK = "";
-    public const ITEMS_SEPARATOR_LINE_BREAK = "\n";
-    public const ITEMS_SEPARATOR_DOUBLE_LINE_BREAK = "\n\n";
+    public const ITEMS_SEPARATOR_LINE_BREAK = PHP_EOL;
+    public const ITEMS_SEPARATOR_DOUBLE_LINE_BREAK = PHP_EOL.PHP_EOL;
 
     public const NUMBERING_SEPARATOR_NO_SPACE = "";
     public const NUMBERING_SEPARATOR_SPACE = " ";
@@ -88,14 +88,14 @@ class Menu
 
     public function lineBreak(int $number = 1): self
     {
-        $this->menu .= str_repeat("\n", $number);
+        $this->menu .= str_repeat(PHP_EOL, $number);
 
         return $this;
     }
 
     public function line(string $text): self
     {
-        $this->menu .= "$text\n";
+        $this->menu .= "$text".PHP_EOL;
 
         return $this;
     }

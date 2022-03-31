@@ -22,7 +22,7 @@ class StateCommandTest extends TestCase
     {
         File::shouldReceive('exists')->once()->andReturn(true);
         $this->artisan('ussd:state', ['name' => 'welcome'])
-            ->expectsOutput('File Already exists !')
+            ->expectsOutput('File already exists !')
             ->assertExitCode(0);
     }
 }

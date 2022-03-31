@@ -42,7 +42,7 @@ class StateCommand extends GenerateCommand
 
             $this->info($this->className($name).' state created successfully');
         } else {
-            $this->error('File Already exists !');
+            $this->error('File already exists !');
         }
     }
 }

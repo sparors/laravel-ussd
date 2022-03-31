@@ -43,7 +43,7 @@ class ActionCommand extends GenerateCommand
 
             $this->info($this->className($name).' action created successfully');
         } else {
-            $this->error('File Already exists !');
+            $this->error('File already exists !');
         }
     }
 }
