@@ -197,7 +197,7 @@ class Record
 
     public function __set($name, $value)
     {
-        return $this->set($name, $value, config('ussd.cache_ttl'));
+        $this->set($name, $value, config('ussd.cache_ttl'));
     }
 
     public function __get($name)
@@ -222,7 +222,7 @@ class Record
         }
 
         if (is_array($argument)) {
-            return $this->setMultiple($argument, config('ussd.cache_ttl'));
+            $this->setMultiple($argument, config('ussd.cache_ttl'));
         }
     }
 }
