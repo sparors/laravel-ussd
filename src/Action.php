@@ -16,5 +16,7 @@ abstract class Action
     public function setRecord(Record $record)
     {
         $this->record = $record;
+
+        return $this;
     }
 }
