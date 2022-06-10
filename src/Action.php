@@ -13,7 +13,7 @@ abstract class Action
     /**
      * @param Record $record
      */
-    public function setRecord(Record $record)
+    public function setRecord(Record $record): self
     {
         $this->record = $record;
 
