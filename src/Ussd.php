@@ -2,6 +2,9 @@
 
 namespace Sparors\Ussd;
 
+use Sparors\Ussd\Contracts\OperatorContract;
+use Sparors\Ussd\Operators\DefaultOperator;
+
 class Ussd
 {
     /**
@@ -21,6 +24,8 @@ class Ussd
      */
     public function machine()
     {
-        return new Machine();
+        $configuredOperator = config('ussd.operator',DefaultOperator::class);
+        $operator = new $configuredOperator();
+        return $operator->decorate(new Machine());
     }
 }

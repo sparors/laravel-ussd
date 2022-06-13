@@ -3,7 +3,8 @@
 namespace Sparors\Ussd\Tests;
 
 use Sparors\Ussd\Machine;
-use Orchestra\Testbench\TestCase;
+use Sparors\Ussd\Facades\Ussd as UssdFacade;
+use Sparors\Ussd\Tests\Operators\TestOperator;
 
 class MachineTest extends TestCase
 {
@@ -46,6 +47,24 @@ class MachineTest extends TestCase
             [
                 'message' => 'Hello World',
                 'action' => 'input'
+            ],
+            $machine->run()
+        );
+    }
+
+    public function test_it_can_be_decorated_using_providers()
+    {
+        config()->set('ussd.operator', TestOperator::class);
+
+        $machine = UssdFacade::machine()
+            ->setSessionId('1234')
+            ->setInitialState(HelloState::class);
+
+        $this->assertEquals(
+            [
+                'action' => 'input',
+                'message' => 'Hello World',
+                'operator' => 'Test'
             ],
             $machine->run()
         );
