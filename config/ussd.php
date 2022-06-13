@@ -26,6 +26,19 @@ return [
 
     'action_namespace' => env('USSD_ACTION_NS', 'App\\Http\\Ussd\\Actions'),
 
+    /*
+     |--------------------------------------------------------------------------
+     | USSD Operator / Service provider
+     |--------------------------------------------------------------------------
+     | This is a decorator class that configures the Machine to match
+     | the operator request parameters, response and input format
+     | Must implement Sparors\Ussd\Contracts\OperatorContract
+     |
+     | Africastalking, Hubtel, Nsano available as examples
+     */
+
+    'operator' => \Sparors\Ussd\Operators\DefaultOperator::class,
+
      /*
     |--------------------------------------------------------------------------
     | Store
