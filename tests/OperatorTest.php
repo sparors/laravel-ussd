@@ -11,7 +11,7 @@ use Sparors\Ussd\Tests\Operators\TestOperator;
 
 class OperatorTest extends TestCase
 {
-    public function test_it_doesnot_use_an_operator_when_none_is_set_in_the_config()
+    public function test_it_does_not_use_an_operator_when_none_is_set_in_the_config()
     {
         config()->set('ussd.operator', null);
         $this
