@@ -103,7 +103,7 @@ class Machine
     }
 
     /** @param Configurator|string $configurator */
-    public function useConfigurator($configurator): static
+    public function useConfigurator($configurator): self
     {
         if (is_string($configurator) && class_exists($configurator)) {
             $configurator = new $configurator();
