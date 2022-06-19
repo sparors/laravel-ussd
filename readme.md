@@ -243,6 +243,9 @@ class UssdController extends Controller
 ```
 
 ### Simplifying machine with configurator
+
+> Available from **v2.5.0**
+
 You can use configurator to simplify repetitive parts of your application so they can be shared easily. Just implement and `Sparors\Ussd\Contracts\Configurator` interface and use it in your machine.
 ```php
 <?php
