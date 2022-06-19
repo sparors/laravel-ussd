@@ -3,10 +3,8 @@
 namespace Sparors\Ussd\Tests;
 
 use Exception;
-use Sparors\Ussd\Contracts\Configurator;
 use Sparors\Ussd\Machine;
 use Sparors\Ussd\Facades\Ussd as UssdFacade;
-use Sparors\Ussd\Tests\Operators\TestOperator;
 
 class MachineTest extends TestCase
 {

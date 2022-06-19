@@ -2,10 +2,6 @@
 
 namespace Sparors\Ussd;
 
-use Illuminate\Support\Facades\Log;
-use Sparors\Ussd\Contracts\Configurator;
-use Sparors\Ussd\Operators\DefaultOperator;
-
 class Ussd
 {
     /**
