@@ -29,7 +29,6 @@ class UssdServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(__DIR__.'/../config/ussd.php', 'ussd');
-
         // Register the service the package provides.
         $this->app->singleton('ussd', function ($app) {
             return new Ussd($app);
