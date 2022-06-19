@@ -271,7 +271,8 @@ class Nsano implements Configurator
     }
 }
 ?>
-
+```
+```php
 <?php
 
 namespace App\Http\Controllers;
