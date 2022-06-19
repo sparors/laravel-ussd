@@ -4,6 +4,18 @@ All notable changes to `laravel Ussd` will be documented in this file.
 
 ## [Unreleased]
 
+## [v2.5.0] - 2022-06-19
+### Added
+- Add configuring USSDs using decorator pattern.
+
+## [v2.4.2] - 2022-06-12
+### Changed
+- Change Action class `setRecord` method to return `$this`
+
+## [v2.4.1] - 2022-03-31
+### Fixed
+- Clean up
+
 ## [v2.4.0] - 2022-02-22
 
 ### Added
@@ -70,7 +82,11 @@ All notable changes to `laravel Ussd` will be documented in this file.
 - Ussd config to allow developers customize behaviour
 - Ussd service Provider class to allow laravel know how to integrate the package
 
-[Unreleased]: ../../compare/v2.3.1...HEAD
+[Unreleased]: ../../compare/v2.5.0...HEAD
+[v2.5.0]: ../../compare/v2.4.2...v2.5.0
+[v2.4.2]: ../../compare/v2.4.1...v2.4.2
+[v2.4.1]: ../../compare/v2.4.0...v2.4.1
+[v2.4.0]: ../../compare/v2.3.1...v2.4.0
 [v2.3.1]: ../../compare/v2.3.0...v2.3.1
 [v2.3.0]: ../../compare/v2.2.0...v2.3.0
 [v2.2.0]: ../../compare/v2.1.0...v2.2.0
