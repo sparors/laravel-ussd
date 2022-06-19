@@ -2,13 +2,13 @@
 
 namespace Sparors\Ussd\Operators;
 
-use Sparors\Ussd\Contracts\OperatorContract;
+use Sparors\Ussd\Contracts\Configurator;
 use Sparors\Ussd\Machine;
 
-class DefaultOperator implements OperatorContract
+class DefaultOperator implements Configurator
 {
-    public function decorate(Machine $machine): Machine
+    public function configure(Machine $machine): void
     {
-        return $machine;
+        $machine;
     }
 }

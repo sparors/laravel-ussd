@@ -2,20 +2,20 @@
 
 namespace Sparors\Ussd\Operators;
 
-use Sparors\Ussd\Contracts\OperatorContract;
+use Sparors\Ussd\Contracts\Configurator;
 use Sparors\Ussd\Machine;
 
-class Nsano implements OperatorContract
+class Nsano implements Configurator
 {
-    public function decorate(Machine $machine): Machine
+    public function configure(Machine $machine): void
     {
-        return $machine->set([
+        $machine->set([
             'phone_number' => request('msisdn'),
             'network' => request('network'),
             'session_id' => request('UserSessionID'),
             'input' => request('msg')
         ])
-            ->setResponse(function(string $message, string $action) {
+            ->setResponse(function (string $message, string $action) {
                 return [
                     'USSDResp' => [
                         'action' => $action === '2' ? 'prompt' : 'input',

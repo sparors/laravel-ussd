@@ -5,6 +5,7 @@ namespace Sparors\Ussd;
 use Closure;
 use Exception;
 use Illuminate\Support\Facades\Cache;
+use Sparors\Ussd\Contracts\Configurator;
 
 class Machine
 {
@@ -99,6 +100,24 @@ class Machine
         }
 
         return ($this->response)($stateClass->render(), $stateClass->getAction());
+    }
+
+    /** @param Configurator|string $configurator */
+    public function useConfigurator($configurator): static
+    {
+        if (is_string($configurator) && class_exists($configurator)) {
+            $configurator = new $configurator();
+        }
+
+        throw_if(
+            !$configurator instanceof Configurator,
+            Exception::class,
+            "configurator does not implement Sparors\Ussd\Contracts\Configurator interface."
+        );
+
+        $configurator->configure($this);
+
+        return $this;
     }
 
     protected function saveParameter(string $key, $value)

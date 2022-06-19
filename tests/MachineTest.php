@@ -2,6 +2,8 @@
 
 namespace Sparors\Ussd\Tests;
 
+use Exception;
+use Sparors\Ussd\Contracts\Configurator;
 use Sparors\Ussd\Machine;
 use Sparors\Ussd\Facades\Ussd as UssdFacade;
 use Sparors\Ussd\Tests\Operators\TestOperator;
@@ -52,11 +54,11 @@ class MachineTest extends TestCase
         );
     }
 
-    public function test_it_can_be_decorated_using_providers()
+    /** @dataProvider pass_configurator_as */
+    public function test_it_can_make_use_of_a_configurator($operator, $configurator)
     {
-        config()->set('ussd.operator', TestOperator::class);
-
         $machine = UssdFacade::machine()
+            ->useConfigurator($configurator)
             ->setSessionId('1234')
             ->setInitialState(HelloState::class);
 
@@ -64,9 +66,28 @@ class MachineTest extends TestCase
             [
                 'action' => 'input',
                 'message' => 'Hello World',
-                'operator' => 'Test'
+                'operator' => $operator,
             ],
             $machine->run()
         );
+    }
+
+    public function pass_configurator_as()
+    {
+        return [
+            ['Default', CogConfigurator::class],
+            ['Dynamic', new CogConfigurator('Dynamic')],
+        ];
+    }
+
+    public function test_invalid_configurator_throws_an_exception()
+    {
+        $this->expectException(Exception::class);
+
+        UssdFacade::machine()
+            ->useConfigurator(ByeState::class)
+            ->setSessionId('1234')
+            ->setInitialState(HelloState::class)
+            ->run();
     }
 }

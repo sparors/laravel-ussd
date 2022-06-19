@@ -2,14 +2,14 @@
 
 namespace Sparors\Ussd\Operators;
 
-use Sparors\Ussd\Contracts\OperatorContract;
+use Sparors\Ussd\Contracts\Configurator;
 use Sparors\Ussd\Machine;
 
-class Hubtel implements OperatorContract
+class Hubtel implements Configurator
 {
-    public function decorate(Machine $machine): Machine
+    public function configure(Machine $machine): void
     {
-        return $machine->set([
+        $machine->set([
             'phone_number' => request('Mobile'),
             'network' => request('Operator'),
             'session_id' => request('SessionId'),

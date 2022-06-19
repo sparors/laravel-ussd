@@ -2,15 +2,15 @@
 
 namespace Sparors\Ussd\Operators;
 
-use Sparors\Ussd\Contracts\OperatorContract;
+use Sparors\Ussd\Contracts\Configurator;
 use Sparors\Ussd\Machine;
 use Sparors\Ussd\State;
 
-class Africastalking implements OperatorContract
+class Africastalking implements Configurator
 {
-    public function decorate(Machine $machine): Machine
+    public function configure(Machine $machine): void
     {
-        return $machine->setFromRequest([
+        $machine->setFromRequest([
             'phone_number',
             'network' => 'serviceCode',
             'session_id' => 'sessionId'

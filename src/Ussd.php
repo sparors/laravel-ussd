@@ -3,7 +3,7 @@
 namespace Sparors\Ussd;
 
 use Illuminate\Support\Facades\Log;
-use Sparors\Ussd\Contracts\OperatorContract;
+use Sparors\Ussd\Contracts\Configurator;
 use Sparors\Ussd\Operators\DefaultOperator;
 
 class Ussd
@@ -25,20 +25,6 @@ class Ussd
      */
     public function machine()
     {
-        $configuredOperator = config('ussd.operator');
-        $machine = new Machine();
-
-        try {
-            $operator = $this->app->make($configuredOperator);
-        }catch (\Exception $exception){
-            Log::warning($exception->getMessage());
-            return $machine;
-        }
-
-        if (!$operator instanceof OperatorContract) {
-            return $machine;
-        }
-
-        return $operator->decorate($machine);
+        return new Machine();
     }
 }

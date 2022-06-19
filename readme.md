@@ -217,30 +217,84 @@ use App\Http\Ussd\States\Welcome;
 
 class UssdController extends Controller
 {
-	public function index()
-	{
-	      $ussd = Ussd::machine()
-	      ->setFromRequest([
-		  'network',
-		  'phone_number' => 'msisdn',
-		  'sessionId' => 'UserSessionID',
-		  'input' => 'msg'
-	      ])
-	      ->setInitialState(Welcome::class)
-	      ->setResponse(function (string $message, string $action) {
-		  return [
-		      'USSDResp' => [
-			  'action' => $action,
-			  'menus' => '',
-			  'title' => $message
-		      ]
-		  ];
-	      });
+    public function index()
+    {
+        $ussd = Ussd::machine()
+            ->setFromRequest([
+                'network',
+                'phone_number' => 'msisdn',
+                'sessionId' => 'UserSessionID',
+                'input' => 'msg'
+            ])
+          ->setInitialState(Welcome::class)
+          ->setResponse(function (string $message, string $action) {
+                return [
+                    'USSDResp' => [
+                        'action' => $action,
+                        'menus' => '',
+                        'title' => $message
+                    ]
+                ];
+            });
 
-	    return response()->json($ussd->run());
+        return response()->json($ussd->run());
     }
 }
 ```
+
+### Simplifying machine with configurator
+You can use configurator to simplify repetitive parts of your application so they can be shared easily. Just implement and `Sparors\Ussd\Contracts\Configurator` interface and use it in your machine.
+```php
+<?php
+
+use Sparors\Ussd\Contracts\Configurator;
+
+// Creating a configurator in eg. App\Http\Ussd\Configurators\Nsano.php
+class Nsano implements Configurator
+{
+    public function configure(Machine $machine): void
+    {
+        $machine->setFromRequest([
+                'network',
+                'phone_number' => 'msisdn',
+                'sessionId' => 'UserSessionID',
+                'input' => 'msg'
+        ])->setResponse(function (string $message, string $action) {
+            return [
+                'USSDResp' => [
+                    'action' => $action,
+                    'menus' => '',
+                    'title' => $message
+                ]
+            ];
+        });
+    }
+}
+?>
+
+<?php
+
+namespace App\Http\Controllers;
+
+use Sparors\Ussd\Facades\Ussd;
+use App\Http\Ussd\States\Welcome;
+use App\Http\Ussd\Configurators\Nsano'
+
+// Using it in a controller
+class UssdController extends Controller
+{
+    public function index()
+    {
+        $ussd = Ussd::machine()
+            ->useConfigurator(Nsano::class)
+            ->setInitialState(Welcome::class);
+
+        return response()->json($ussd->run());
+    }
+}
+?>
+```
+
 
 ### Running the application
 
@@ -261,7 +315,7 @@ You'll find the documentation on [https://sparors.github.io/ussd-docs](https://s
 ### Testing
 
 ``` bash
-$ vendor\bin\phpunit
+$ vendor/bin/phpunit
 ```
 
 ### Change log
