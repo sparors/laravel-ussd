@@ -122,7 +122,41 @@ class MakePayment extends Action
     }
 }
 ```
+### Calling Actions
+#### Calling from a state class
+After you create your action class, it can be called from whithin the afterRendering method from a state class. Let use an example of a GetNominee state and VerifyNominee action.
+``` php
+<?php
 
+namespace App\Http\Ussd\States;
+
+use Sparors\Ussd\State;
+use App\Http\Ussd\Actions\VerifyNominee;
+
+class GetNominee extends State
+{
+    protected $action = self::INPUT; // No need for this as it is the default.
+    protected function beforeRendering(): void
+    {
+       // Get some input from user
+       $this->menu->line('Enter nominee code: ');
+    }
+
+    protected function afterRendering(string $argument): void
+    {
+        // We saving the normiee code to the record/session/cache to be used later
+        $this->record->set('nominee_code', $argument);
+
+        // We can call an action class by passing the class to a decision method.
+        // Eg: using VerifyNominee::class - as action class
+        // Remember to import the VerifyNominee class
+
+        $this->decision->custom(function($argument){
+            return is_string($argument);
+        }, VerifyNominee::class);
+    }
+}
+```
 ### Creating Menus
 
 Add your menu to the beforeRendering method
