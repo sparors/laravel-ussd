@@ -11,7 +11,7 @@ Build Ussd (Unstructured Supplementary Service Data) applications with laravel w
 You can install the package via composer:
 
 ``` bash
-composer require sparors/laravel-ussd
+composer require sparors/laravel-ussd:^3.0
 ```
 
 Laravel Ussd provides zero configuration out of the box. To publish the config, run the vendor publish command:
@@ -22,96 +22,143 @@ php artisan vendor:publish --provider="Sparors\Ussd\UssdServiceProvider" --tag=u
 
 ## Usage
 
-### Creating States
+### Context
 
-We provide a ussd artisan command which allows you to quickly create new states.
+The context of the ussd contains vital data required to succcessfully run a ussd application. It require 3 major input and any addition one you may choose to provide.
 
-``` bash
-php artisan ussd:state Welcome
-```
+SID: refers to a unique id for every session.
 
-### Creating Nested States
+GID: refers to a group id that is common to a user accross session. This is ussually just the phone number or msisdn.
 
-Linux/Unix
+Input: is the last input the user entered.
 
-``` bash
-php artisan ussd:state Airtime/Welcome
-```
-
-Windows
-
-``` bash
-php artisan ussd:state Airtime\Welcome
-```
-
-Welcome state class generated
+Aside these, you may choose to pass addition information like network and phone number if you may need them.
 
 ``` php
 <?php
 
-namespace App\Http\Ussd\States;
+use Sparors\Ussd\Context;
 
-use Sparors\Ussd\State;
+Context::create(
+    request('sessionID'),
+    request('phoneNumber'),
+    request('input')
+)->with([
+    'network' => request('network'),
+    'phone_number' => request('phoneNumber')
+])
+```
 
-class Welcome extends State
+### Record
+
+Ussd record provides a simple way to save data as your application runs.
+
+``` php
+<?php
+
+use Sparors\Ussd\Record;
+
+$record = App::make(Record::class);
+
+$record->set('name', 'Isaac');
+```
+
+### Dependency Injection
+
+You can inject record and context into ussd application to make use of them when needed.
+
+### States
+
+We provide an artisan command which allows you to quickly create new states. State should have one method render which returns `Sparors\Ussd\Menu`
+
+``` bash
+php artisan ussd:state WelcomeState
+```
+
+States help build ussd menus that users interupt with. `Sparors\Ussd\Menu` provides a fluent API to easily create menus. `Sparors\Ussd\Attributes\Transition` attributes help to define how to connect one state to another while `Sparors\Ussd\Attributes\Terminate` help know the final state.
+
+``` php
+<?php
+
+namespace App\Ussd\States;
+
+use Sparors\Ussd\Menu;
+use Sparors\Ussd\Context;
+use Sparors\Ussd\Decisions\Equal;
+use Sparors\Ussd\Contracts\State;
+use Sparors\Ussd\Attributes\Transition;
+
+#[Transition(MakePaymentAction::class, new Equal(1))]
+#[Transition(InvalidInputState::class, new Fallback)]
+class WelcomeState implements State
 {
-    protected function beforeRendering(): void
+    public function render(Context $context): Menu
     {
-       //
-    }
-
-    protected function afterRendering(string $argument): void
-    {
-        //
+       return Menu::build()
+            ->text('Welcome To Laravel USSD')
+            ->lineBreak(2)
+            ->line('Select an option . ' . $context->get('network'))
+            ->listing([
+                'Airtime Topup',
+                'Data Bundle',
+                'TV Subscription',
+                'ECG/GWCL',
+                'Talk To Us'
+            ])
+            ->lineBreak(2)
+            ->text('Powered by Sparors');
     }
 }
 ```
 
-### Creating Actions
+The first state should implement `Sparors\Ussd\Contracts\InitialState` instead of the generic state.
 
-> Available from **v2.0.0**
+Due to some limitation with PHP 8.0, you can not pass class instance to attributes. So to other come this limitation, you can pass an array with the full class path as the first element and the rest should be argument required.
 
-We provide a ussd artisan command which allows you to quickly create new actions.
-
-``` bash
-php artisan ussd:action MakePayment
+``` php
+#[Transition(MakePaymentAction::class, [Equal::class, 1])]
+#[Transition(InvalidInputState::class, Fallback::class)]
+class WelcomeState implements State {}
 ```
 
-MakePayment action class generated
+Final States should not have `Transition` but rather `Terminate`.
+
+``` php
+#[Terminate]
+class GoodByeState implements State
+{
+    public function render(Record $record): Menu
+    {
+       return Menu::build()->text('Bye bye ' . $record->get('name'));
+    }
+}
+```
+
+### Actions
+
+We provide a ussd artisan command which allows you to quickly create new actions. Action should have one method execute which returns a string.
+
+``` bash
+php artisan ussd:action MakePaymentAction
+```
+
+Actions should return a string which is the full qualified path to a state or another action.
 
 ``` php
 <?php
 
 namespace App\Http\Ussd\Actions;
 
-use Sparors\Ussd\Action;
-
-class MakePayment extends Action
-{
-    public function run(): string
-    {
-        return ''; // The state after this
-    }
-}
-```
-
-Run your logic and return the next state's fully qualified class name
-
-``` php
-<?php
-
-namespace App\Http\Ussd\Actions;
-
-use Sparors\Ussd\Action;
+use Sparors\Ussd\Contracts\Action;
 use App\Http\Ussd\States\PaymentSuccess;
 use App\Http\Ussd\States\PaymentError;
 
 class MakePayment extends Action
 {
-    public function run(): string
+    public function execute(Record $record): string
     {
         $response = Http::post('/payment', [
-            'phone_number' => $this->record->phoneNumber
+            'phone_number' => $record->phoneNumber
         ]);
 
         if ($response->ok()) {
@@ -123,128 +170,38 @@ class MakePayment extends Action
 }
 ```
 
-### Creating Menus
-
-Add your menu to the beforeRendering method
-
-``` php
-<?php
-
-namespace App\Http\Ussd\States;
-
-use Sparors\Ussd\State;
-
-class Welcome extends State
-{
-    protected function beforeRendering(): void
-    {
-        $name = $this->record->name;
-
-        $this->menu->text('Welcome To Laravel USSD')
-            ->lineBreak(2)
-            ->line('Select an option')
-            ->listing([
-                'Airtime Topup',
-                'Data Bundle',
-                'TV Subscription',
-                'ECG/GWCL',
-                'Talk To Us'
-            ])
-            ->lineBreak(2)
-            ->text('Powered by Sparors');
-    }
-
-    protected function afterRendering(string $argument): void
-    {
-        //
-    }
-}
-```
-
-### Linking States with Decisions
-
-Add your decision to the afterRendering method and link them with states
-
-``` php
-<?php
-
-namespace App\Http\Ussd\States;
-
-use App\Http\Ussd\States\GetRecipientNumber;
-use App\Http\Ussd\States\MaintenanceMode;
-use App\Http\Ussd\States\Error;
-use Sparors\Ussd\State;
-
-class Welcome extends State
-{
-    protected function beforeRendering(): void
-    {
-       $this->menu->text('Welcome To Laravel Ussd')
-            ->lineBreak(2)
-            ->line('Select an option')
-            ->listing([
-                'Airtime Topup',
-                'Data Bundle',
-                'TV Subscription',
-                'ECG/GWCL',
-                'Talk To Us'
-            ])
-            ->lineBreak(2)
-            ->text('Powered by Sparors');
-    }
-
-    protected function afterRendering(string $argument): void
-    {
-        // If input is equal to 1, 2, 3, 4 or 5, render the appropriate state
-        $this->decision->equal('1', GetRecipientNumber::class)
-                       ->between(2, 5, MaintenanceMode::class)
-                       ->any(Error::class);
-    }
-}
-```
-
-### Setting Initial State
-
-Import the welcome state class and pass it to the setInitialState method
+### Running a ussd Application
 
 ``` php
 <?php
 
 namespace App\Http\Controllers;
 
-use Sparors\Ussd\Facades\Ussd;
-use App\Http\Ussd\States\Welcome;
+use Sparors\Ussd\Ussd;
+use Sparors\Ussd\Context;
+use App\Ussd\States\WelcomeState;
 
 class UssdController extends Controller
 {
     public function index()
     {
-        $ussd = Ussd::machine()
-            ->setFromRequest([
-                'network',
-                'phone_number' => 'msisdn',
-                'sessionId' => 'UserSessionID',
-                'input' => 'msg'
-            ])
-          ->setInitialState(Welcome::class)
-          ->setResponse(function (string $message, string $action) {
-                return [
-                    'USSDResp' => [
-                        'action' => $action,
-                        'menus' => '',
-                        'title' => $message
-                    ]
-                ];
-            });
-
-        return response()->json($ussd->run());
+        return Ussd::build(
+                    Context::create(
+                        request('sessionID'),
+                        request('phoneNumber'),
+                        request('input')
+                    )->with([
+                        'network' => request('network'),
+                        'phone_number' => request('phoneNumber')
+                    ])
+                )
+                ->useInitialState(WelcomeState::class)
+                ->run();
     }
 }
 ```
 
-### Simplifying machine with configurator
-
-> Available from **v2.5.0**
+### Simplifying USSD with configurator
 
 You can use configurator to simplify repetitive parts of your application so they can be shared easily. Just implement and `Sparors\Ussd\Contracts\Configurator` interface and use it in your machine.
 ```php
@@ -255,17 +212,12 @@ use Sparors\Ussd\Contracts\Configurator;
 // Creating a configurator in eg. App\Http\Ussd\Configurators\Nsano.php
 class Nsano implements Configurator
 {
-    public function configure(Machine $machine): void
+    public function configure(Ussd $ussd): void
     {
-        $machine->setFromRequest([
-                'network',
-                'phone_number' => 'msisdn',
-                'sessionId' => 'UserSessionID',
-                'input' => 'msg'
-        ])->setResponse(function (string $message, string $action) {
+        $ussd->setResponse(function (string $message, int $terminating) {
             return [
                 'USSDResp' => [
-                    'action' => $action,
+                    'action' => $termination ? 'prompt': 'input',
                     'menus' => '',
                     'title' => $message
                 ]
@@ -289,27 +241,14 @@ class UssdController extends Controller
 {
     public function index()
     {
-        $ussd = Ussd::machine()
+        return Ussd::build(Context::create('1', '2', '3'))
             ->useConfigurator(Nsano::class)
-            ->setInitialState(Welcome::class);
-
-        return response()->json($ussd->run());
+            ->useInitialState(Welcome::class)
+            ->run();
     }
 }
 ?>
 ```
-
-
-### Running the application
-
-You can use the development server the ships with Laravel by running, from the project root:
-
-``` bash
-php artisan serve
-```
-You can visit [http://localhost:8000](http://localhost:8000) to see the application in action.
-
-Enjoy!!!
 
 ### Documentation
 

@@ -1,0 +1,13 @@
+<?php
+
+namespace {{ namespace }};
+
+use Sparors\Ussd\Contracts\Action;
+
+class {{ class }} implements Action
+{
+    public function respond(string $message, bool $terminating): mixed
+    {
+        //
+    }
+}

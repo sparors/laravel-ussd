@@ -1,0 +1,13 @@
+<?php
+
+namespace {{ namespace }};
+
+use Sparors\Ussd\Contracts\Decision;
+
+class {{ class }} implements Decision
+{
+    public function decide(string $actual): bool
+    {
+        return false;
+    }
+}
