@@ -2,7 +2,7 @@
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Total Downloads][ico-downloads]][link-downloads]
-[![Build Status][ico-travis]][link-travis]
+[![Build Status][ico-github]][link-github]
 
 Build Ussd (Unstructured Supplementary Service Data) applications with laravel without breaking a sweat.
 
@@ -308,10 +308,10 @@ MIT. Please see the [license file](LICENSE) for more information.
 
 [ico-version]: https://img.shields.io/packagist/v/sparors/laravel-ussd.svg?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/sparors/laravel-ussd.svg?style=flat-square
-[ico-travis]: https://img.shields.io/travis/sparors/laravel-ussd/master.svg?style=flat-square
+[ico-github]: https://img.shields.io/github/actions/workflow/status/sparors/laravel-ussd/php.yml?style=flat-square
 
 [link-packagist]: https://packagist.org/packages/sparors/laravel-ussd
 [link-downloads]: https://packagist.org/packages/sparors/laravel-ussd
-[link-travis]: https://travis-ci.com/sparors/laravel-ussd
+[link-github]: https://github.com/sparors/laravel-ussd/actions/workflows/php.yml
 [link-author]: https://github.com/sparors
 [link-contributors]: ../../contributors
