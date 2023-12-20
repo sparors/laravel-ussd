@@ -17,6 +17,7 @@ use Sparors\Ussd\Attributes\Transition;
 use Sparors\Ussd\Contracts\Configurator;
 use Sparors\Ussd\Contracts\ContinueState;
 use Sparors\Ussd\Contracts\ExceptionHandler;
+use Sparors\Ussd\Contracts\InitialAction;
 use Sparors\Ussd\Contracts\InitialState;
 use Sparors\Ussd\Exceptions\NextStateNotFoundException;
 use Sparors\Ussd\Tests\PendingTest;
@@ -33,9 +34,9 @@ class Ussd
     private Context $context;
     private ?string $storeName;
     private int $continuingMode;
-    private InitialState $initialState;
     private Response|Closure $response;
     private ?ContinueState $continuingState;
+    private InitialState|InitialAction $initialState;
     private null|int|DateInterval|DateTimeInterface $continuingTtl;
     private ExceptionHandler|Closure $exceptionHandler;
 
@@ -89,16 +90,16 @@ class Ussd
         return $this;
     }
 
-    public function useInitialState(string|InitialState $initialState)
+    public function useInitialState(string|InitialState|InitialAction $initialState)
     {
         if (is_string($initialState) && class_exists($initialState)) {
             $initialState = App::make($initialState);
         }
 
         throw_unless(
-            $initialState instanceof InitialState,
+            $initialState instanceof InitialState || $initialState instanceof InitialAction,
             InvalidArgumentException::class,
-            "Initial state should implement ".InitialState::class
+            "Initial state should implement ".InitialState::class." or ".InitialAction::class
         );
 
         $this->initialState = $initialState;

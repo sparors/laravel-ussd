@@ -12,6 +12,7 @@ use Sparors\Ussd\Contracts\Configurator;
 use Sparors\Ussd\Contracts\InitialState;
 use Sparors\Ussd\Contracts\ContinueState;
 use Sparors\Ussd\Contracts\ExceptionHandler;
+use Sparors\Ussd\Contracts\InitialAction;
 
 class PendingTest
 {
@@ -23,7 +24,7 @@ class PendingTest
     private ?Closure $exceptionHandler;
 
     public function __construct(
-        private string|InitialState $initialState,
+        private string|InitialState|InitialAction $initialState,
         private int $continuingMode = ContinuingMode::START,
         private null|int|DateInterval|DateTimeInterface $continuingTtl = null,
         private null|string|ContinueState $continuingState = null

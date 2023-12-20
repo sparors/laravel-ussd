@@ -16,6 +16,7 @@ use Sparors\Ussd\Contracts\ContinueState;
 use Sparors\Ussd\Contracts\ExceptionHandler;
 use PHPUnit\Framework\Assert;
 use Sparors\Ussd\Context;
+use Sparors\Ussd\Contracts\InitialAction;
 use Sparors\Ussd\Record;
 use Sparors\Ussd\Ussd;
 
@@ -25,7 +26,7 @@ class Testing
     private array $actors;
 
     public function __construct(
-        private string|InitialState $initialState,
+        private string|InitialState|InitialAction $initialState,
         private int $continuingMode,
         private null|int|DateInterval|DateTimeInterface $continuingTtl,
         private null|string|ContinueState $continuingState,

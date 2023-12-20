@@ -234,7 +234,7 @@ namespace App\Http\Controllers;
 
 use Sparors\Ussd\Facades\Ussd;
 use App\Http\Ussd\States\Welcome;
-use App\Http\Ussd\Configurators\Nsano'
+use App\Http\Ussd\Configurators\Nsano;
 
 // Using it in a controller
 class UssdController extends Controller
@@ -257,8 +257,32 @@ You'll find the documentation on [https://sparors.github.io/ussd-docs](https://s
 
 ### Testing
 
-``` bash
-$ vendor/bin/phpunit
+You can easily test how your ussd application will respond to user input
+
+``` php
+<?php
+
+namespace App\Tests\Feature;
+
+use Sparors\Ussd\Ussd;
+
+final class UssdTest extends TestCase
+{
+    public function test_ussd_runs()
+    {
+        Ussd::test(WelcomeState::class)
+            ->additional(['network' => 'MTN', 'phone_number' => '123123123'])
+            ->actingAs('isaac')
+            ->start()
+            ->assertSee('Welcome...')
+            ->assertContextHas('network', 'MTN')
+            ->assertContextHas('phone_number')
+            ->assertContextMissing('name')
+            ->input('1')
+            ->assertSee('Now see the magic...')
+            ->assertRecordHas('choice');
+    }
+}
 ```
 
 ### Change log
