@@ -4,7 +4,6 @@ namespace Sparors\Ussd\Tests\Integration;
 
 use Sparors\Ussd\Tests\TestCase;
 use Illuminate\Support\Facades\File;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 final class CommandTest extends TestCase
 {
@@ -30,7 +29,6 @@ final class CommandTest extends TestCase
             ->assertExitCode(0);
     }
 
-    // #[DataProvider('data_available_make_commands')]
     /** @dataProvider data_available_make_commands */
     public function test_make_commands_are_available($command)
     {

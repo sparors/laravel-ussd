@@ -12,6 +12,7 @@ use InvalidArgumentException;
 use Sparors\Ussd\Contracts\State;
 use Sparors\Ussd\Contracts\Action;
 use Illuminate\Support\Facades\App;
+use Sparors\Ussd\Attributes\LimitContent;
 use Sparors\Ussd\Tests\PendingTest;
 use Sparors\Ussd\Contracts\Response;
 use Sparors\Ussd\Attributes\Paginate;
@@ -257,12 +258,56 @@ class Ussd
 
         /** @var Menu */ $menu = App::call([$state, 'render']);
 
-        return [(string) $menu, $this->terminating($state)];
+        [$content, $more] = $this->limit($state, $menu);
+
+        return [$content, $this->terminating($state, $more)];
     }
 
     private function next(State $state): string
     {
         $reflected = new ReflectionClass($state);
+
+        $attributes = $reflected->getAttributes(LimitContent::class);
+
+        foreach ($attributes as $attribute) {
+            $content = (string) App::call([$state, 'render']);
+
+            $limitContent = $attribute->newInstance();
+
+            if ($limitContent->characters > strlen($content)) {
+                continue;
+            }
+
+            if (is_array($limitContent->more)) {
+                $limitContent->more = new $limitContent->more[0](...array_slice($limitContent->more, 1));
+            } elseif (is_string($limitContent->more)) {
+                $limitContent->more = new $limitContent->more;
+            }
+
+            if ($limitContent->more->decide($this->context->input())) {
+                $items = preg_split(
+                    "/ÙÚÛÜ/",
+                    wordwrap(
+                        $content,
+                        $limitContent->characters - (strlen($limitContent->moreText) + 1),
+                        "ÙÚÛÜ",
+                        true
+                    )
+                );
+
+                /** @var Record */ $record =  App::make(Record::class);
+                $limitId = Str::of($state::class)->replace('\\', '')->snake()->append('_limit')->value();
+                $limit = $record->get($limitId, 1);
+
+                if (count($items) > $limit) {
+                    $record->set($limitId, $limit + 1);
+                } else {
+                    continue;
+                }
+
+                return $state::class;
+            }
+        }
 
         $attributes = $reflected->getAttributes(Paginate::class);
 
@@ -352,8 +397,51 @@ class Ussd
         return $instance::class;
     }
 
-    private function terminating(State $state): bool
+    /** @return array{0: string, 1: bool} */
+    private function limit(State $state, Menu $menu): array
     {
+        $content = (string) $menu;
+
+        $reflected = new ReflectionClass($state);
+
+        $attributes = $reflected->getAttributes(LimitContent::class);
+
+        foreach ($attributes as $attribute) {
+            $limitContent = $attribute->newInstance();
+
+            if ($limitContent->characters > strlen($content)) {
+                continue;
+            }
+
+            $items = preg_split(
+                "/ÙÚÛÜ/",
+                wordwrap(
+                    $content,
+                    $limitContent->characters - (strlen($limitContent->moreText) + 1),
+                    "ÙÚÛÜ",
+                    true
+                )
+            );
+
+            /** @var Record */ $record =  App::make(Record::class);
+            $limitId = Str::of($state::class)->replace('\\', '')->snake()->append('_limit')->value();
+            $limit = $record->get($limitId, 1);
+
+            return [
+                sprintf("%s\n%s", $items[$limit - 1], $limitContent->moreText),
+                count($items) > $limit
+            ];
+        }
+
+        return [$content, false];
+    }
+
+    private function terminating(State $state, bool $more): bool
+    {
+        if ($more) {
+            return false;
+        }
+
         $reflected = new ReflectionClass($state);
 
         $attributes = $reflected->getAttributes(Terminate::class);

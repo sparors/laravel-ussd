@@ -19,7 +19,7 @@ final class UssdTest extends TestCase
     {
         $this->assertEquals(
             [
-                'message' => 'In the beginning...',
+                'message' => "In the\n#.More",
                 'terminating' => false,
             ],
             Ussd::build(
@@ -44,7 +44,7 @@ final class UssdTest extends TestCase
         $this->assertEquals(
             [
                 'message' => "Tadaa...\nabracadabra\nHurray!!!!!",
-                'terminating' => false
+                'terminating' => true
             ],
             Ussd::build(
                 Context::create('1234', '7890', '1')
@@ -58,7 +58,7 @@ final class UssdTest extends TestCase
     {
         $this->assertEquals(
             [
-                'message' => 'In the beginning...',
+                'message' => "In the\n#.More",
                 'terminating' => false,
             ],
             Ussd::build(
@@ -97,7 +97,7 @@ final class UssdTest extends TestCase
     {
         $this->assertEquals(
             [
-                'message' => 'In the beginning...',
+                'message' => "In the\n#.More",
                 'terminating' => false,
             ],
             Ussd::build(
@@ -131,24 +131,94 @@ final class UssdTest extends TestCase
             ->run()
         );
 
+        $res = Ussd::build(
+            Context::create('1234', '7890', '#')
+        )
+        ->useInitialState(BeginningState::class)
+        ->run();
+
+        $this->assertTrue($res['terminating']);
+    }
+
+    public function test_ussd_can_limit_content()
+    {
         $this->assertEquals(
             [
-                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar\n",
+                'message' => "In the\n#.More",
+                'terminating' => false,
+            ],
+            Ussd::build(
+                Context::create('1234', '7890', '1')
+            )
+            ->useInitialState(BeginningState::class)
+            ->run()
+        );
+
+        $this->assertEquals(
+            [
+                'message' => "beginning..\n#.More",
                 'terminating' => false
             ],
             Ussd::build(
-                Context::create('1234', '7890', '0')
+                Context::create('1234', '7890', '#')
             )
             ->useInitialState(BeginningState::class)
             ->run()
         );
     }
 
+    public function test_ussd_can_detect_end_of_limit_content()
+    {
+        $this->assertEquals(
+            [
+                'message' => "In the\n#.More",
+                'terminating' => false,
+            ],
+            Ussd::build(
+                Context::create('1234', '7890', '1')
+            )
+            ->useInitialState(BeginningState::class)
+            ->run()
+        );
+
+        $this->assertEquals(
+            [
+                'message' => "beginning..\n#.More",
+                'terminating' => false
+            ],
+            Ussd::build(
+                Context::create('1234', '7890', '#')
+            )
+            ->useInitialState(BeginningState::class)
+            ->run()
+        );
+
+        $this->assertEquals(
+            [
+                'message' => ".\n#.More",
+                'terminating' => false
+            ],
+            Ussd::build(
+                Context::create('1234', '7890', '#')
+            )
+            ->useInitialState(BeginningState::class)
+            ->run()
+        );
+
+        $res = Ussd::build(
+            Context::create('1234', '7890', '#')
+        )
+        ->useInitialState(BeginningState::class)
+        ->run();
+
+        $this->assertTrue($res['terminating']);
+    }
+
     public function test_ussd_can_automatically_continue_from_old_session()
     {
         $this->assertEquals(
             [
-                'message' => 'In the beginning...',
+                'message' => "In the\n#.More",
                 'terminating' => false,
             ],
             Ussd::build(
@@ -175,7 +245,7 @@ final class UssdTest extends TestCase
         $this->assertEquals(
             [
                 'message' => "Tadaa...\nabracadabra\nHurray!!!!!",
-                'terminating' => false
+                'terminating' => true
             ],
             Ussd::build(
                 Context::create('5656', '7890', '1')
@@ -190,7 +260,7 @@ final class UssdTest extends TestCase
     {
         $this->assertEquals(
             [
-                'message' => 'In the beginning...',
+                'message' => "In the\n#.More",
                 'terminating' => false,
             ],
             Ussd::build(
@@ -216,7 +286,7 @@ final class UssdTest extends TestCase
 
         $this->assertEquals(
             [
-                'message' => "In the beginning...",
+                'message' => "In the\n#.More",
                 'terminating' => false
             ],
             Ussd::build(
@@ -232,7 +302,7 @@ final class UssdTest extends TestCase
     {
         $this->assertEquals(
             [
-                'message' => 'In the beginning...',
+                'message' => "In the\n#.More",
                 'terminating' => false,
             ],
             Ussd::build(
@@ -272,7 +342,7 @@ final class UssdTest extends TestCase
         $this->assertEquals(
             [
                 'message' => "Tadaa...\nabracadabra\nHurray!!!!!",
-                'terminating' => false
+                'terminating' => true
             ],
             Ussd::build(
                 Context::create('5656', '7890', '1')
@@ -287,7 +357,7 @@ final class UssdTest extends TestCase
     {
         $this->assertEquals(
             [
-                'message' => 'In the beginning...',
+                'message' => "In the\n#.More",
                 'terminating' => false,
             ],
             Ussd::build(
@@ -326,7 +396,7 @@ final class UssdTest extends TestCase
 
         $this->assertEquals(
             [
-                'message' => "In the beginning...",
+                'message' => "In the\n#.More",
                 'terminating' => false
             ],
             Ussd::build(
@@ -342,7 +412,7 @@ final class UssdTest extends TestCase
     {
         $this->assertEquals(
             [
-                'message' => 'In the beginning...',
+                'message' => "In the\n#.More",
                 'terminating' => false,
             ],
             Ussd::build(
@@ -369,7 +439,7 @@ final class UssdTest extends TestCase
         $this->assertEquals(
             [
                 'message' => "Tadaa...\nabracadabra\nHurray!!!!!",
-                'terminating' => false
+                'terminating' => true
             ],
             Ussd::build(
                 Context::create('6565', '7890', '1')
@@ -384,7 +454,7 @@ final class UssdTest extends TestCase
     {
         $this->assertEquals(
             [
-                'message' => 'In the beginning...',
+                'message' => "In the\n#.More",
                 'terminating' => false,
             ],
             Ussd::build(
@@ -437,7 +507,7 @@ final class UssdTest extends TestCase
         $this->assertEquals(
             [
                 'message' => "Tadaa...\nabracadabra\nHurray!!!!!",
-                'terminating' => false
+                'terminating' => true
             ],
             Ussd::build(
                 Context::create('6565', '7890', '1')
@@ -448,14 +518,13 @@ final class UssdTest extends TestCase
         );
     }
 
-    // #[DataProvider('configurator_as')]
     /** @dataProvider configurator_as */
     public function test_it_can_make_use_of_a_configurator($operator, $configurator)
     {
         $this->assertEquals(
             [
                 'action' => 'input',
-                'message' => 'In the beginning...',
+                'message' => "In the\n#.More",
                 'operator' => $operator,
             ],
             Ussd::build(
