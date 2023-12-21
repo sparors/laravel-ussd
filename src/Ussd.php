@@ -3,24 +3,27 @@
 namespace Sparors\Ussd;
 
 use Closure;
-use DateInterval;
-use DateTimeInterface;
 use Exception;
+use DateInterval;
 use ReflectionClass;
+use DateTimeInterface;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Sparors\Ussd\Contracts\State;
 use Sparors\Ussd\Contracts\Action;
 use Illuminate\Support\Facades\App;
+use Sparors\Ussd\Tests\PendingTest;
 use Sparors\Ussd\Contracts\Response;
+use Sparors\Ussd\Attributes\Paginate;
 use Sparors\Ussd\Attributes\Terminate;
 use Sparors\Ussd\Attributes\Transition;
+use Sparors\Ussd\Traits\WithPagination;
 use Sparors\Ussd\Contracts\Configurator;
-use Sparors\Ussd\Contracts\ContinueState;
-use Sparors\Ussd\Contracts\ExceptionHandler;
-use Sparors\Ussd\Contracts\InitialAction;
 use Sparors\Ussd\Contracts\InitialState;
+use Sparors\Ussd\Contracts\ContinueState;
+use Sparors\Ussd\Contracts\InitialAction;
+use Sparors\Ussd\Contracts\ExceptionHandler;
 use Sparors\Ussd\Exceptions\NextStateNotFoundException;
-use Sparors\Ussd\Tests\PendingTest;
 
 class Ussd
 {
@@ -252,8 +255,7 @@ class Ussd
 
         $state = App::make($nextState);
 
-        /** @var Menu */
-        $menu = App::call([$state, 'render']);
+        /** @var Menu */ $menu = App::call([$state, 'render']);
 
         return [(string) $menu, $this->terminating($state)];
     }
@@ -261,6 +263,49 @@ class Ussd
     private function next(State $state): string
     {
         $reflected = new ReflectionClass($state);
+
+        $attributes = $reflected->getAttributes(Paginate::class);
+
+        foreach ($attributes as $attribute) {
+            $paginate = $attribute->newInstance();
+
+            foreach(['next', 'previous'] as $key) {
+                if (is_array($paginate->{$key})) {
+                    $paginate->{$key} = new $paginate->{$key}[0](...array_slice($paginate->{$key}, 1));
+                } elseif (is_string($paginate->{$key})) {
+                    $paginate->{$key} = new $paginate->{$key};
+                } elseif (is_null($paginate->{$key})) {
+                    continue;
+                }
+
+                if ($paginate->{$key}->decide($this->context->input())) {
+                    if (class_uses($state)[WithPagination::class] ?? null) {
+                        /** @var WithPagination $state */
+                        /** @var Record */ $record =  App::make(Record::class);
+                        $pageId = Str::of($state::class)->replace('\\', '')->snake()->append('_page')->value();
+                        $page = $record->get($pageId, 1);
+
+                        if ('next' === $key && $state->hasNextPage()) {
+                            $record->set($pageId, $page + 1);
+                        } elseif ('previous' === $key && $state->hasPreviousPage()) {
+                            $record->set($pageId, $page - 1);
+                        } else {
+                            continue;
+                        }
+                    }
+
+                    if ($paginate->callback) {
+                        if (is_array($paginate->callback) && is_string($paginate->callback[0])) {
+                            $paginate->callback[0] = App::make($paginate->callback[0]);
+                        }
+
+                        App::call($paginate->callback);
+                    }
+
+                    return $state::class;
+                }
+            }
+        }
 
         $attributes = $reflected->getAttributes(Transition::class);
 

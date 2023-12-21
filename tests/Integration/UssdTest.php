@@ -31,7 +31,7 @@ final class UssdTest extends TestCase
 
         $this->assertEquals(
             [
-                'message' => "Now see the magic...\nBooooom!",
+                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar\n",
                 'terminating' => false
             ],
             Ussd::build(
@@ -48,6 +48,96 @@ final class UssdTest extends TestCase
             ],
             Ussd::build(
                 Context::create('1234', '7890', '1')
+            )
+            ->useInitialState(BeginningState::class)
+            ->run()
+        );
+    }
+
+    public function test_ussd_can_paginate()
+    {
+        $this->assertEquals(
+            [
+                'message' => 'In the beginning...',
+                'terminating' => false,
+            ],
+            Ussd::build(
+                Context::create('1234', '7890', '1')
+            )
+            ->useInitialState(BeginningState::class)
+            ->run()
+        );
+
+        $this->assertEquals(
+            [
+                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar\n",
+                'terminating' => false
+            ],
+            Ussd::build(
+                Context::create('1234', '7890', '1')
+            )
+            ->useInitialState(BeginningState::class)
+            ->run()
+        );
+
+        $this->assertEquals(
+            [
+                'message' => "Pick one...Booooom!\n3.Baz\n",
+                'terminating' => false
+            ],
+            Ussd::build(
+                Context::create('1234', '7890', '#')
+            )
+            ->useInitialState(BeginningState::class)
+            ->run()
+        );
+    }
+
+    public function test_ussd_can_detect_end_of_paginate()
+    {
+        $this->assertEquals(
+            [
+                'message' => 'In the beginning...',
+                'terminating' => false,
+            ],
+            Ussd::build(
+                Context::create('1234', '7890', '1')
+            )
+            ->useInitialState(BeginningState::class)
+            ->run()
+        );
+
+        $this->assertEquals(
+            [
+                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar\n",
+                'terminating' => false
+            ],
+            Ussd::build(
+                Context::create('1234', '7890', '1')
+            )
+            ->useInitialState(BeginningState::class)
+            ->run()
+        );
+
+        $this->assertEquals(
+            [
+                'message' => "Pick one...Booooom!\n3.Baz\n",
+                'terminating' => false
+            ],
+            Ussd::build(
+                Context::create('1234', '7890', '#')
+            )
+            ->useInitialState(BeginningState::class)
+            ->run()
+        );
+
+        $this->assertEquals(
+            [
+                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar\n",
+                'terminating' => false
+            ],
+            Ussd::build(
+                Context::create('1234', '7890', '0')
             )
             ->useInitialState(BeginningState::class)
             ->run()
@@ -71,7 +161,7 @@ final class UssdTest extends TestCase
 
         $this->assertEquals(
             [
-                'message' => "Now see the magic...\nBooooom!",
+                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar\n",
                 'terminating' => false
             ],
             Ussd::build(
@@ -113,7 +203,7 @@ final class UssdTest extends TestCase
 
         $this->assertEquals(
             [
-                'message' => "Now see the magic...\nBooooom!",
+                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar\n",
                 'terminating' => false
             ],
             Ussd::build(
@@ -155,7 +245,7 @@ final class UssdTest extends TestCase
 
         $this->assertEquals(
             [
-                'message' => "Now see the magic...\nBooooom!",
+                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar\n",
                 'terminating' => false
             ],
             Ussd::build(
@@ -210,7 +300,7 @@ final class UssdTest extends TestCase
 
         $this->assertEquals(
             [
-                'message' => "Now see the magic...\nBooooom!",
+                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar\n",
                 'terminating' => false
             ],
             Ussd::build(
@@ -265,7 +355,7 @@ final class UssdTest extends TestCase
 
         $this->assertEquals(
             [
-                'message' => "Now see the magic...\nBooooom!",
+                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar\n",
                 'terminating' => false
             ],
             Ussd::build(
@@ -320,7 +410,7 @@ final class UssdTest extends TestCase
 
         $this->assertEquals(
             [
-                'message' => "Now see the magic...\nBooooom!",
+                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar\n",
                 'terminating' => false
             ],
             Ussd::build(

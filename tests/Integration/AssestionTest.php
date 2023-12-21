@@ -23,12 +23,16 @@ final class AssestionTest extends TestCase
             ->assertContextMissing('baz')
             ->assertRecordMissing('wow')
             ->input('1')
-            ->assertSee('Now see the magic...')
+            ->assertSee('Pick one...')
+            ->assertSee('Foo')
             ->assertRecordHas('wow')
+            ->input('#')
+            ->assertSee('Pick one...')
+            ->assertSee('Baz')
             ->actingAs('benjamin')
             ->assertSee('In the beginning...')
             ->input('1')
-            ->assertSee('Now see the magic...')
+            ->assertSee('Pick one...')
             ->actingAs('isaac')
             ->input('1')
             ->assertSee('Tadaa...')
@@ -41,7 +45,7 @@ final class AssestionTest extends TestCase
             ->input('9')
             ->assertSee('In the beginning...')
             ->input('1')
-            ->assertSee('Now see the magic...')
+            ->assertSee('Pick one...')
             ->actingAs('isaac');
     }
 }
