@@ -12,5 +12,6 @@ final class Transition
         public string $state,
         public string|array|Decision $decision,
         public null|string|array $callback = null
-    ) { }
+    ) {
+    }
 }

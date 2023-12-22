@@ -8,7 +8,8 @@ class Length implements Decision
 {
     public function __construct(
         private int $length
-    ) { }
+    ) {
+    }
 
     public function decide(string $actual): bool
     {

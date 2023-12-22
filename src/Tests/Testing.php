@@ -210,7 +210,7 @@ class Testing
     private function preventStaleAssertion(): void
     {
         if ($this->switched) {
-            $caller = debug_backtrace(!DEBUG_BACKTRACE_PROVIDE_OBJECT|DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]['function'];
+            $caller = debug_backtrace(!DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]['function'];
             Assert::fail("Call 'input' before '{$caller}' after 'actingAs', or assert before switching to previous users.");
         }
     }

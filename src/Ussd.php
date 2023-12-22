@@ -281,7 +281,7 @@ class Ussd
             if (is_array($limitContent->more)) {
                 $limitContent->more = new $limitContent->more[0](...array_slice($limitContent->more, 1));
             } elseif (is_string($limitContent->more)) {
-                $limitContent->more = new $limitContent->more;
+                $limitContent->more = new $limitContent->more();
             }
 
             if ($limitContent->more->decide($this->context->input())) {
@@ -318,7 +318,7 @@ class Ussd
                 if (is_array($paginate->{$key})) {
                     $paginate->{$key} = new $paginate->{$key}[0](...array_slice($paginate->{$key}, 1));
                 } elseif (is_string($paginate->{$key})) {
-                    $paginate->{$key} = new $paginate->{$key};
+                    $paginate->{$key} = new $paginate->{$key}();
                 } elseif (is_null($paginate->{$key})) {
                     continue;
                 }
@@ -373,7 +373,7 @@ class Ussd
             if (is_array($transition->decision)) {
                 $transition->decision = new $transition->decision[0](...array_slice($transition->decision, 1));
             } elseif (is_string($transition->decision)) {
-                $transition->decision = new $transition->decision;
+                $transition->decision = new $transition->decision();
             }
 
             if ($transition->decision->decide($this->context->input())) {

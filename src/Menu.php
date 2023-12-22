@@ -11,7 +11,8 @@ class Menu implements Stringable
 
     public function __construct(
         private string $content
-    ) { }
+    ) {
+    }
 
     public static function build(): static
     {

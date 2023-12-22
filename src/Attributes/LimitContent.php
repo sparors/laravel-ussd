@@ -12,5 +12,6 @@ final class LimitContent
         public string|array|Decision $more,
         public int $characters,
         public string $moreText,
-    ) { }
+    ) {
+    }
 }

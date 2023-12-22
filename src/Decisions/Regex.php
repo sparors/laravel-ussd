@@ -8,7 +8,8 @@ class Regex implements Decision
 {
     public function __construct(
         private string $pattern
-    ) { }
+    ) {
+    }
 
     public function decide(string $actual): bool
     {

@@ -9,7 +9,8 @@ class Between implements Decision
     public function __construct(
         private string|int|float $start,
         private string|int|float $end
-    ) { }
+    ) {
+    }
 
     public function decide(string $actual): bool
     {

@@ -12,5 +12,6 @@ final class Paginate
         public string|array|Decision $next,
         public null|string|array|Decision $previous = null,
         public null|string|array $callback = null
-    ) { }
+    ) {
+    }
 }
