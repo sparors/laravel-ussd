@@ -286,11 +286,11 @@ class Ussd
 
             if ($limitContent->more->decide($this->context->input())) {
                 $items = preg_split(
-                    "/ÙÚÛÜ/",
+                    "/ÙÛÚ/",
                     wordwrap(
                         $content,
                         $limitContent->characters - (strlen($limitContent->moreText) + 1),
-                        "ÙÚÛÜ",
+                        "ÙÛÚ",
                         true
                     )
                 );
@@ -336,6 +336,19 @@ class Ussd
                             $record->set($pageId, $page - 1);
                         } else {
                             continue;
+                        }
+
+                        $reflected = new ReflectionClass($state);
+
+                        $attributes = $reflected->getAttributes(LimitContent::class);
+
+                        if (count($attributes) > 0) {
+                            $limitId = Str::of($state::class)->replace('\\', '')->snake()->append('_limit')->value();
+                            $limit = $record->get($limitId, 1);
+
+                            if ($limit > 1) {
+                                $record->set($limitId, 1);
+                            }
                         }
                     }
 
@@ -414,11 +427,11 @@ class Ussd
             }
 
             $items = preg_split(
-                "/ÙÚÛÜ/",
+                "/ÙÛÚ/",
                 wordwrap(
                     $content,
                     $limitContent->characters - (strlen($limitContent->moreText) + 1),
-                    "ÙÚÛÜ",
+                    "ÙÛÚ",
                     true
                 )
             );
@@ -428,7 +441,9 @@ class Ussd
             $limit = $record->get($limitId, 1);
 
             return [
-                sprintf("%s\n%s", $items[$limit - 1], $limitContent->moreText),
+                count($items) > $limit
+                    ? sprintf("%s\n%s", rtrim($items[$limit - 1], PHP_EOL), $limitContent->moreText)
+                    : $items[$limit - 1],
                 count($items) > $limit
             ];
         }
@@ -440,6 +455,13 @@ class Ussd
     {
         if ($more) {
             return false;
+        }
+
+        if (class_uses($state)[WithPagination::class] ?? null) {
+            /** @var WithPagination $state */
+            if ($state->hasNextPage()) {
+                return false;
+            }
         }
 
         $reflected = new ReflectionClass($state);
