@@ -17,6 +17,7 @@
     "homepage": "https://github.com/sparors/laravel-ussd",
     "keywords": ["Laravel", "Ussd"],
     "require": {
+        "php": "^8.0",
         "illuminate/support": "~8|~9|~10"
     },
     "require-dev": {
