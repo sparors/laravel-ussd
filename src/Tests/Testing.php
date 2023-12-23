@@ -8,6 +8,7 @@ use DateTimeInterface;
 use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\App;
+use InvalidArgumentException;
 use JsonSerializable;
 use Sparors\Ussd\Contracts\Response;
 use Sparors\Ussd\Contracts\Configurator;
@@ -211,7 +212,7 @@ class Testing
                 }
             }
 
-            throw new \InvalidArgumentException('Invalid use provided.');
+            throw new InvalidArgumentException('Invalid use provided.');
         }
 
         return $this;
