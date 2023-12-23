@@ -31,8 +31,6 @@ class Context
 
     public function with(array $parameters): static
     {
-        assert(array_is_list($parameters) === false, "Parameters must be an associative array");
-
         $this->bag = $parameters;
 
         return $this;

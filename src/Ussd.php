@@ -25,9 +25,12 @@ use Sparors\Ussd\Contracts\ContinueState;
 use Sparors\Ussd\Contracts\InitialAction;
 use Sparors\Ussd\Contracts\ExceptionHandler;
 use Sparors\Ussd\Exceptions\NextStateNotFoundException;
+use Sparors\Ussd\Traits\Conditionable;
 
 class Ussd
 {
+    use Conditionable;
+
     private const INIT = '__init__';
     private const HEAL = '__heal__';
     private const SPUR = '__spur__';
@@ -246,7 +249,7 @@ class Ussd
 
             $record->setMany([
                 static::LIVE => $nextState,
-                static::INIT => true
+                static::INIT => true,
             ]);
 
             if (ContinuingMode::START !== $this->continuingMode) {
@@ -260,7 +263,7 @@ class Ussd
 
         [$content, $more] = $this->limit($state, $menu);
 
-        return [$content, $this->terminating($state, $more)];
+        return [trim($content), $this->terminating($state, $more)];
     }
 
     private function next(State $state): string
@@ -442,9 +445,9 @@ class Ussd
 
             return [
                 count($items) > $limit
-                    ? sprintf("%s\n%s", rtrim($items[$limit - 1], PHP_EOL), $limitContent->moreText)
+                    ? sprintf("%s\n%s", $items[$limit - 1], $limitContent->moreText)
                     : $items[$limit - 1],
-                count($items) > $limit
+                count($items) > $limit,
             ];
         }
 

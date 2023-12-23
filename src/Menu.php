@@ -2,11 +2,13 @@
 
 namespace Sparors\Ussd;
 
+use Sparors\Ussd\Traits\Conditionable;
 use Sparors\Ussd\Traits\MenuBuilder;
 use Stringable;
 
 class Menu implements Stringable
 {
+    use Conditionable;
     use MenuBuilder;
 
     public function __construct(
@@ -43,22 +45,6 @@ class Menu implements Stringable
         $this->content = (string) $menu . $this->content;
 
         return $this;
-    }
-
-    public function when(bool $value, callable $callback, callable $fallback = null): static
-    {
-        if ($value) {
-            $callback($this);
-        } elseif ($fallback) {
-            $fallback($this);
-        }
-
-        return $this;
-    }
-
-    public function unless(bool $value, callable $callback, callable $fallback = null): static
-    {
-        return $this->when(!$value, $callback, $fallback);
     }
 
     public function __toString(): string

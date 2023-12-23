@@ -32,7 +32,7 @@ final class UssdTest extends TestCase
 
         $this->assertEquals(
             [
-                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar\n",
+                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar",
                 'terminating' => false
             ],
             Ussd::build(
@@ -71,7 +71,7 @@ final class UssdTest extends TestCase
 
         $this->assertEquals(
             [
-                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar\n",
+                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar",
                 'terminating' => false
             ],
             Ussd::build(
@@ -83,7 +83,7 @@ final class UssdTest extends TestCase
 
         $this->assertEquals(
             [
-                'message' => "Pick one...Booooom!\n3.Baz\n",
+                'message' => "Pick one...Booooom!\n3.Baz",
                 'terminating' => false
             ],
             Ussd::build(
@@ -110,7 +110,7 @@ final class UssdTest extends TestCase
 
         $this->assertEquals(
             [
-                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar\n",
+                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar",
                 'terminating' => false
             ],
             Ussd::build(
@@ -122,7 +122,7 @@ final class UssdTest extends TestCase
 
         $this->assertEquals(
             [
-                'message' => "Pick one...Booooom!\n3.Baz\n",
+                'message' => "Pick one...Booooom!\n3.Baz",
                 'terminating' => false
             ],
             Ussd::build(
@@ -232,7 +232,7 @@ final class UssdTest extends TestCase
 
         $this->assertEquals(
             [
-                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar\n",
+                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar",
                 'terminating' => false
             ],
             Ussd::build(
@@ -274,7 +274,7 @@ final class UssdTest extends TestCase
 
         $this->assertEquals(
             [
-                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar\n",
+                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar",
                 'terminating' => false
             ],
             Ussd::build(
@@ -316,7 +316,7 @@ final class UssdTest extends TestCase
 
         $this->assertEquals(
             [
-                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar\n",
+                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar",
                 'terminating' => false
             ],
             Ussd::build(
@@ -371,7 +371,7 @@ final class UssdTest extends TestCase
 
         $this->assertEquals(
             [
-                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar\n",
+                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar",
                 'terminating' => false
             ],
             Ussd::build(
@@ -426,7 +426,7 @@ final class UssdTest extends TestCase
 
         $this->assertEquals(
             [
-                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar\n",
+                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar",
                 'terminating' => false
             ],
             Ussd::build(
@@ -481,7 +481,7 @@ final class UssdTest extends TestCase
 
         $this->assertEquals(
             [
-                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar\n",
+                'message' => "Pick one...Booooom!\n1.Foo\n2.Bar",
                 'terminating' => false
             ],
             Ussd::build(
@@ -595,7 +595,7 @@ final class UssdTest extends TestCase
 
         $this->assertEquals(
             [
-                'message' => "In the sophisticated world\n10.Dream big and dare to fail.\n",
+                'message' => "In the sophisticated world\n10.Dream big and dare to fail.",
                 'terminating' => true
             ],
             Ussd::build(
