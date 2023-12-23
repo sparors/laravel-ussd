@@ -120,6 +120,12 @@ class Ussd
             $continuingState = App::make($continuingState);
         }
 
+        throw_unless(
+            in_array($continuingMode, [ContinuingMode::START, ContinuingMode::CONTINUE, ContinuingMode::CONFIRM], true),
+            InvalidArgumentException::class,
+            "Invalid continuingMode"
+        );
+
         $this->continuingMode = $continuingMode;
         $this->continuingTtl = $continuingTtl;
 
