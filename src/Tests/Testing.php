@@ -15,6 +15,7 @@ use Sparors\Ussd\Contracts\InitialState;
 use Sparors\Ussd\Contracts\ContinueState;
 use Sparors\Ussd\Contracts\ExceptionHandler;
 use PHPUnit\Framework\Assert;
+use ReflectionFunction;
 use Sparors\Ussd\Context;
 use Sparors\Ussd\Contracts\InitialAction;
 use Sparors\Ussd\Record;
@@ -33,8 +34,6 @@ class Testing
         private ?string $storeName,
         private array $additional,
         private array $uses,
-        private ?Closure $response,
-        private ?Closure $exceptionHandler,
         private string $actor
     ) {
         $this->actors[$actor] = [Str::random(), Str::random(), ''];
@@ -171,14 +170,6 @@ class Testing
 
         $this->applyUses($ussd);
 
-        if ($this->response) {
-            $ussd->useResponse($this->response);
-        }
-
-        if ($this->exceptionHandler) {
-            $ussd->useExceptionHandler($this->exceptionHandler);
-        }
-
         $this->actors[$this->actor][2] = $ussd->run();
 
         $this->switched = false;
@@ -193,15 +184,34 @@ class Testing
 
             if ($use instanceof Configurator) {
                 $ussd->useConfigurator($use);
+                continue;
             }
 
             if ($use instanceof Response) {
                 $ussd->useResponse($use);
+                continue;
             }
 
             if ($use instanceof ExceptionHandler) {
                 $ussd->useExceptionHandler($use);
+                continue;
             }
+
+            if ($use instanceof Closure) {
+                $parameters = (new ReflectionFunction($use))->getNumberOfParameters();
+
+                if (1 === $parameters) {
+                    $ussd->useExceptionHandler($use);
+                    continue;
+                }
+
+                if (2 === $parameters) {
+                    $ussd->useResponse($use);
+                    continue;
+                }
+            }
+
+            throw new \InvalidArgumentException('Invalid use provided.');
         }
 
         return $this;

@@ -18,10 +18,8 @@ class PendingTest
 {
     private array $uses;
     private string $actor;
-    private ?Closure $response;
     private array $additional;
     private ?string $storeName;
-    private ?Closure $exceptionHandler;
 
     public function __construct(
         private string|InitialState|InitialAction $initialState,
@@ -31,9 +29,7 @@ class PendingTest
     ) {
         $this->uses = [];
         $this->additional = [];
-        $this->response = null;
         $this->storeName = null;
-        $this->exceptionHandler = null;
         $this->actor = Str::random(8);
     }
 
@@ -44,23 +40,9 @@ class PendingTest
         return $this;
     }
 
-    public function use(string|Configurator|Response|ExceptionHandler $use)
+    public function use(string|Configurator|Response|ExceptionHandler|Closure $use)
     {
         $this->uses[] = $use;
-
-        return $this;
-    }
-
-    public function useResponse(Closure $response)
-    {
-        $this->response = $response;
-
-        return $this;
-    }
-
-    public function useExceptionHandler(Closure $exceptionHandler)
-    {
-        $this->exceptionHandler = $exceptionHandler;
 
         return $this;
     }
@@ -89,8 +71,6 @@ class PendingTest
             $this->storeName,
             $this->additional,
             $this->uses,
-            $this->response,
-            $this->exceptionHandler,
             $this->actor
         );
     }
