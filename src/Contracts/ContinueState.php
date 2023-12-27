@@ -4,5 +4,5 @@ namespace Sparors\Ussd\Contracts;
 
 interface ContinueState extends State
 {
-    public function confirm(): string;
+    public function confirm(): Decision;
 }

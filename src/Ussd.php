@@ -213,7 +213,7 @@ class Ussd
             $record->forget(static::HALT);
             $record->set(static::CURB, true);
 
-            if ($this->continuingState->confirm() === $this->context->input()) {
+            if ($this->continuingState->confirm()->decide($this->context->input())) {
                 $record->set(static::HEAL, $spur);
             }
         }

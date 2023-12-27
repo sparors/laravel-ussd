@@ -3,6 +3,8 @@
 namespace Sparors\Ussd\Tests\Dummy;
 
 use Sparors\Ussd\Contracts\ContinueState;
+use Sparors\Ussd\Contracts\Decision;
+use Sparors\Ussd\Decisions\Equal;
 use Sparors\Ussd\Menu;
 
 class ContinuingState implements ContinueState
@@ -15,8 +17,8 @@ class ContinuingState implements ContinueState
             ->text('Any to start');
     }
 
-    public function confirm(): string
+    public function confirm(): Decision
     {
-        return '1';
+        return new Equal(1);
     }
 }
