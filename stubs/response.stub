@@ -2,9 +2,9 @@
 
 namespace {{ namespace }};
 
-use Sparors\Ussd\Contracts\Action;
+use Sparors\Ussd\Contracts\Response;
 
-class {{ class }} implements Action
+class {{ class }} implements Response
 {
     public function respond(string $message, bool $terminating): mixed
     {
