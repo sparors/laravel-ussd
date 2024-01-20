@@ -14,6 +14,8 @@ use Sparors\Ussd\Commands\DecisionMakeCommand;
 use Sparors\Ussd\Commands\ResponseMakeCommand;
 use Illuminate\Foundation\Console\AboutCommand;
 use Sparors\Ussd\Commands\ConfiguratorMakeCommand;
+use Sparors\Ussd\Commands\ExceptionHandlerCommand;
+use Sparors\Ussd\Commands\ExceptionHandlerMakeCommand;
 
 class UssdServiceProvider extends ServiceProvider
 {
@@ -61,6 +63,8 @@ class UssdServiceProvider extends ServiceProvider
             DecisionMakeCommand::class,
             ConfiguratorCommand::class,
             ConfiguratorMakeCommand::class,
+            ExceptionHandlerCommand::class,
+            ExceptionHandlerMakeCommand::class,
         ]);
 
         AboutCommand::add('USSD', [
