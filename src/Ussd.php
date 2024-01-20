@@ -12,7 +12,7 @@ use InvalidArgumentException;
 use Sparors\Ussd\Contracts\State;
 use Sparors\Ussd\Contracts\Action;
 use Illuminate\Support\Facades\App;
-use Sparors\Ussd\Attributes\LimitContent;
+use Sparors\Ussd\Attributes\Truncate;
 use Sparors\Ussd\Tests\PendingTest;
 use Sparors\Ussd\Contracts\Response;
 use Sparors\Ussd\Attributes\Paginate;
@@ -191,6 +191,11 @@ class Ussd
             [$message, $terminating] = $this->bail($exception);
         }
 
+        if ($terminating && ContinuingMode::START !== $this->continuingMode) {
+            /** @var Record */ $record =  App::make(Record::class);
+            $record->forget(static::SPUR, true);
+        }
+
         return $this->response instanceof Response
             ? ($this->response)->respond($message, $terminating)
             : ($this->response)($message, $terminating);
@@ -276,14 +281,14 @@ class Ussd
     {
         $reflected = new ReflectionClass($state);
 
-        $attributes = $reflected->getAttributes(LimitContent::class);
+        $attributes = $reflected->getAttributes(Truncate::class);
 
         foreach ($attributes as $attribute) {
             $content = (string) App::call([$state, 'render']);
 
             $limitContent = $attribute->newInstance();
 
-            if ($limitContent->characters > strlen($content)) {
+            if ($limitContent->limit > strlen($content)) {
                 continue;
             }
 
@@ -298,7 +303,7 @@ class Ussd
                     "/ÙÛÚ/",
                     wordwrap(
                         $content,
-                        $limitContent->characters - (strlen($limitContent->moreText) + 1),
+                        $limitContent->limit - (strlen($limitContent->end) + 1),
                         "ÙÛÚ",
                         true
                     )
@@ -349,7 +354,7 @@ class Ussd
 
                         $reflected = new ReflectionClass($state);
 
-                        $attributes = $reflected->getAttributes(LimitContent::class);
+                        $attributes = $reflected->getAttributes(Truncate::class);
 
                         if (count($attributes) > 0) {
                             $limitId = Str::of($state::class)->replace('\\', '')->snake()->append('_limit')->value();
@@ -379,13 +384,13 @@ class Ussd
         foreach($attributes as $attribute) {
             $transition = $attribute->newInstance();
 
-            if (is_array($transition->decision)) {
-                $transition->decision = new $transition->decision[0](...array_slice($transition->decision, 1));
-            } elseif (is_string($transition->decision)) {
-                $transition->decision = new $transition->decision();
+            if (is_array($transition->match)) {
+                $transition->match = new $transition->match[0](...array_slice($transition->match, 1));
+            } elseif (is_string($transition->match)) {
+                $transition->match = new $transition->match();
             }
 
-            if ($transition->decision->decide($this->context->input())) {
+            if ($transition->match->decide($this->context->input())) {
                 if ($transition->callback) {
                     if (is_array($transition->callback) && is_string($transition->callback[0])) {
                         $transition->callback[0] = App::make($transition->callback[0]);
@@ -394,7 +399,7 @@ class Ussd
                     App::call($transition->callback);
                 }
 
-                return $transition->state;
+                return $transition->to;
             }
         }
 
@@ -426,12 +431,12 @@ class Ussd
 
         $reflected = new ReflectionClass($state);
 
-        $attributes = $reflected->getAttributes(LimitContent::class);
+        $attributes = $reflected->getAttributes(Truncate::class);
 
         foreach ($attributes as $attribute) {
             $limitContent = $attribute->newInstance();
 
-            if ($limitContent->characters > strlen($content)) {
+            if ($limitContent->limit > strlen($content)) {
                 continue;
             }
 
@@ -439,7 +444,7 @@ class Ussd
                 "/ÙÛÚ/",
                 wordwrap(
                     $content,
-                    $limitContent->characters - (strlen($limitContent->moreText) + 1),
+                    $limitContent->limit - (strlen($limitContent->end) + 1),
                     "ÙÛÚ",
                     true
                 )
@@ -451,7 +456,7 @@ class Ussd
 
             return [
                 count($items) > $limit
-                    ? sprintf("%s\n%s", $items[$limit - 1], $limitContent->moreText)
+                    ? sprintf("%s\n%s", $items[$limit - 1], $limitContent->end)
                     : $items[$limit - 1],
                 count($items) > $limit,
             ];

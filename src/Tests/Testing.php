@@ -6,6 +6,7 @@ use Closure;
 use DateInterval;
 use DateTimeInterface;
 use Illuminate\Http\Response as HttpResponse;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\App;
 use InvalidArgumentException;
@@ -144,8 +145,27 @@ class Testing
         return $this;
     }
 
-    public function timeout()
+    public function wait(int|DateInterval|DateTimeInterface $ttl)
     {
+        if ($ttl instanceof DateTimeInterface) {
+            $ttl = Carbon::now()->diffInSeconds($ttl);
+        }
+
+        if ($ttl instanceof DateInterval) {
+            $ttl = Carbon::now()->diffInSeconds(Carbon::now()->add($ttl));
+        }
+
+        Carbon::setTestNow(Carbon::now()->addSeconds($ttl));
+
+        return $this;
+    }
+
+    public function timeout(null|int|DateInterval|DateTimeInterface $ttl = null)
+    {
+        if ($ttl) {
+            $this->wait($ttl);
+        }
+
         $this->actors[$this->actor][0] = Str::random();
 
         $this->dispatch('');

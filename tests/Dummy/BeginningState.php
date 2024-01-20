@@ -2,7 +2,7 @@
 
 namespace Sparors\Ussd\Tests\Dummy;
 
-use Sparors\Ussd\Attributes\LimitContent;
+use Sparors\Ussd\Attributes\Truncate;
 use Sparors\Ussd\Attributes\Transition;
 use Sparors\Ussd\Context;
 use Sparors\Ussd\Contracts\InitialState;
@@ -10,7 +10,7 @@ use Sparors\Ussd\Decisions\Equal;
 use Sparors\Ussd\Menu;
 use Sparors\Ussd\Record;
 
-#[LimitContent([Equal::class, '#'], 18, '#.More')]
+#[Truncate(18, '#.More', [Equal::class, '#'])]
 #[Transition(PetitAction::class, [Equal::class, 1], [self::class, 'callback'])]
 class BeginningState implements InitialState
 {

@@ -9,8 +9,8 @@ use Sparors\Ussd\Contracts\Decision;
 final class Transition
 {
     public function __construct(
-        public string $state,
-        public string|array|Decision $decision,
+        public string $to,
+        public string|array|Decision $match,
         public null|string|array $callback = null
     ) {
     }

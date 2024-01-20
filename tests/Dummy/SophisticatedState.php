@@ -2,7 +2,7 @@
 
 namespace Sparors\Ussd\Tests\Dummy;
 
-use Sparors\Ussd\Attributes\LimitContent;
+use Sparors\Ussd\Attributes\Truncate;
 use Sparors\Ussd\Attributes\Paginate;
 use Sparors\Ussd\Attributes\Terminate;
 use Sparors\Ussd\Contracts\InitialState;
@@ -11,7 +11,7 @@ use Sparors\Ussd\Menu;
 use Sparors\Ussd\Traits\WithPagination;
 
 #[Terminate]
-#[LimitContent([Equal::class, '#'], 150, '#.More')]
+#[Truncate(150, '#.More', [Equal::class, '#'])]
 #[Paginate([Equal::class, '#'], [Equal::class, '0'])]
 class SophisticatedState implements InitialState
 {

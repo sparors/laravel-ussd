@@ -10,7 +10,7 @@ use Sparors\Ussd\Ussd;
 
 final class AssestionTest extends TestCase
 {
-    public function test_assestion_runs_successfully()
+    public function test_ussd_assestions_work_successfully()
     {
         Ussd::test(BeginningState::class, ContinuingMode::CONFIRM, null, ContinuingState::class)
             ->additional(['foo' => 'bar'])
@@ -43,11 +43,26 @@ final class AssestionTest extends TestCase
             ->assertRecordHas('wow')
             ->assertSee('Tadaa...')
             ->timeout()
-            ->assertSee('Wanna continue?')
-            ->input('9')
             ->assertSee('In the')
             ->input('1')
             ->assertSee('Pick one...')
             ->actingAs('isaac');
+    }
+
+    public function test_ussd_assestion_can_wait_for_some_time_to_pass()
+    {
+        Ussd::test(BeginningState::class, ContinuingMode::CONFIRM, 5, ContinuingState::class)
+            ->actingAs('isaac')
+            ->start()
+            ->input('1')
+            ->timeout(6)
+            ->assertSee('In the')
+            ->timeout(3)
+            ->assertSee('Wanna continue')
+            ->input('1')
+            ->input('1')
+            ->assertSee('Tadaa...')
+            ->timeout()
+            ->assertSee('In the');
     }
 }
