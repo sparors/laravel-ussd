@@ -8,7 +8,7 @@ use Sparors\Ussd\Record;
 
 trait WithPagination
 {
-    private static $currentPage;
+    private static $cache = [];
 
     private function lastPage(): int
     {
@@ -17,17 +17,17 @@ trait WithPagination
 
     public function currentPage(): int
     {
-        if (isset(self::$currentPage)) {
-            return self::$currentPage;
+        $name = get_called_class();
+
+        if (isset(static::$cache[$name])) {
+            return static::$cache[$name];
         }
 
         /** @var Record */ $record =  App::make(Record::class);
-        $pageId = Str::of(get_called_class())->replace('\\', '')->snake()->append('_page')->value();
+        $pageId = Str::of($name)->replace('\\', '')->snake()->append('_page')->value();
         $page = $record->get($pageId, 1);
 
-        self::$currentPage = $page;
-
-        return $page;
+        return static::$cache[$name] = $page;
     }
 
     public function isFirstPage(): int
@@ -56,6 +56,6 @@ trait WithPagination
 
     public function __destruct()
     {
-        self::$currentPage = null;
+        static::$cache = [];
     }
 }

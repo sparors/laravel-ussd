@@ -43,4 +43,11 @@ trait MenuBuilder
 
         return $this;
     }
+
+    public function format(string $format, array ...$values): static
+    {
+        $this->content .= sprintf($format, ...$values);
+
+        return $this;
+    }
 }
