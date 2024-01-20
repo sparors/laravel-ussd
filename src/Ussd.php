@@ -191,9 +191,13 @@ class Ussd
             [$message, $terminating] = $this->bail($exception);
         }
 
-        if ($terminating && ContinuingMode::START !== $this->continuingMode) {
+        if (ContinuingMode::START !== $this->continuingMode) {
             /** @var Record */ $record =  App::make(Record::class);
-            $record->forget(static::SPUR, true);
+            if ($terminating) {
+                $record->forget(static::SPUR, true);
+            } elseif ($spur = $record->get(static::SPUR, public: true)) {
+                $record->set(static::SPUR, $spur, $this->continuingTtl, true);
+            }
         }
 
         return $this->response instanceof Response
