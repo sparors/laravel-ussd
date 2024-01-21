@@ -8,7 +8,6 @@ use DateTimeInterface;
 use Exception;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
-use InvalidArgumentException;
 use ReflectionClass;
 use Sparors\Ussd\Attributes\Paginate;
 use Sparors\Ussd\Attributes\Terminate;
@@ -22,7 +21,16 @@ use Sparors\Ussd\Contracts\InitialAction;
 use Sparors\Ussd\Contracts\InitialState;
 use Sparors\Ussd\Contracts\Response;
 use Sparors\Ussd\Contracts\State;
+use Sparors\Ussd\Exceptions\ActiveStateNotFoundException;
+use Sparors\Ussd\Exceptions\InvalidConfiguratorException;
+use Sparors\Ussd\Exceptions\InvalidContinueStateException;
+use Sparors\Ussd\Exceptions\InvalidContinuingModeException;
+use Sparors\Ussd\Exceptions\InvalidExceptionHandlerException;
+use Sparors\Ussd\Exceptions\InvalidInitialStateException;
+use Sparors\Ussd\Exceptions\InvalidResponseException;
+use Sparors\Ussd\Exceptions\InvalidStateException;
 use Sparors\Ussd\Exceptions\NextStateNotFoundException;
+use Sparors\Ussd\Exceptions\NoInitialStateProvided;
 use Sparors\Ussd\Tests\PendingTest;
 use Sparors\Ussd\Traits\Conditionable;
 use Sparors\Ussd\Traits\WithPagination;
@@ -94,8 +102,8 @@ class Ussd
 
         throw_unless(
             $configurator instanceof Configurator,
-            InvalidArgumentException::class,
-            "Configurator should implement ".Configurator::class
+            InvalidConfiguratorException::class,
+            $configurator::class
         );
 
         $configurator->configure($this);
@@ -111,8 +119,8 @@ class Ussd
 
         throw_unless(
             $initialState instanceof InitialState || $initialState instanceof InitialAction,
-            InvalidArgumentException::class,
-            "Initial state should implement ".InitialState::class." or ".InitialAction::class
+            InvalidInitialStateException::class,
+            $initialState::class
         );
 
         $this->initialState = $initialState;
@@ -131,8 +139,8 @@ class Ussd
 
         throw_unless(
             in_array($continuingMode, [ContinuingMode::START, ContinuingMode::CONTINUE, ContinuingMode::CONFIRM], true),
-            InvalidArgumentException::class,
-            "Invalid continuingMode"
+            InvalidContinuingModeException::class,
+            $continuingMode
         );
 
         $this->continuingMode = $continuingMode;
@@ -141,8 +149,8 @@ class Ussd
         if (ContinuingMode::CONFIRM === $continuingMode) {
             throw_unless(
                 $continuingState instanceof ContinueState,
-                InvalidArgumentException::class,
-                "Continuing state should implement ".ContinueState::class
+                InvalidContinueStateException::class,
+                isset($continuingState) ? $continuingState::class : null
             );
         }
 
@@ -159,8 +167,8 @@ class Ussd
 
         throw_unless(
             $response instanceof Response || $response instanceof Closure,
-            InvalidArgumentException::class,
-            "Response should implement ".Response::class." or be a closure"
+            InvalidResponseException::class,
+            $response::class
         );
 
         $this->response = $response;
@@ -176,8 +184,8 @@ class Ussd
 
         throw_unless(
             $exceptionHandler instanceof ExceptionHandler || $exceptionHandler instanceof Closure,
-            InvalidArgumentException::class,
-            "Exception handler should implement ".ExceptionHandler::class." or be a closure"
+            InvalidExceptionHandlerException::class,
+            $exceptionHandler::class
         );
 
         $this->exceptionHandler = $exceptionHandler;
@@ -226,7 +234,8 @@ class Ussd
         } elseif (ContinuingMode::CONFIRM === $this->continuingMode && $record->has(static::HALT) && $spur = $record->get(static::SPUR, public: true)) {
             throw_unless(
                 $this->continuingState instanceof ContinueState,
-                $this->continuingState::class.' does not implement '.ContinueState::class
+                InvalidContinueStateException::class,
+                isset($this->continuingState) ? $this->continuingState::class : null
             );
 
             $record->forget(static::HALT);
@@ -248,7 +257,7 @@ class Ussd
 
             throw_unless(
                 $nextState,
-                'No active state found. This may indicate session has ended'
+                ActiveStateNotFoundException::class
             );
 
             $nextState = App::make($nextState);
@@ -265,7 +274,7 @@ class Ussd
         } else {
             throw_unless(
                 isset($this->initialState),
-                'Initial state should be provided'
+                NoInitialStateProvided::class
             );
 
             $nextState = $this->initialState::class;
@@ -417,7 +426,7 @@ class Ussd
             }
         }
 
-        throw new NextStateNotFoundException($state);
+        throw new NextStateNotFoundException($state::class);
     }
 
     private function actionable(string $class): string
@@ -432,7 +441,8 @@ class Ussd
 
         throw_unless(
             $instance instanceof State,
-            $instance::class.' does not implement '.State::class
+            InvalidStateException::class,
+            $instance::class
         );
 
         return $instance::class;

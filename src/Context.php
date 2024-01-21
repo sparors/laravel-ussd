@@ -2,7 +2,8 @@
 
 namespace Sparors\Ussd;
 
-use InvalidArgumentException;
+use Sparors\Ussd\Exceptions\GlobaldentifierEmptyException;
+use Sparors\Ussd\Exceptions\UniqueIdentifierEmptyException;
 
 class Context
 {
@@ -14,11 +15,11 @@ class Context
         private string $input
     ) {
         if (0 === strlen($uid)) {
-            throw new InvalidArgumentException("Unique Identifier (uid) can not be empty");
+            throw new UniqueIdentifierEmptyException();
         }
 
         if (0 === strlen($gid)) {
-            throw new InvalidArgumentException("Global Identifier (gid) can not be empty");
+            throw new GlobaldentifierEmptyException();
         }
 
         $this->bag = [];

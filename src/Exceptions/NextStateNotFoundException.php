@@ -2,15 +2,10 @@
 
 namespace Sparors\Ussd\Exceptions;
 
-use Exception;
-use Sparors\Ussd\Contracts\State;
-
-class NextStateNotFoundException extends Exception
+class NextStateNotFoundException extends UssdException
 {
-    public function __construct(State $state)
+    public function __construct(string $state)
     {
-        $class = $state::class;
-
-        parent::__construct("No state found after {$class} with the given input");
+        parent::__construct("Next state not found after {$state}. This may indicate unhandled transition");
     }
 }
