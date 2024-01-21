@@ -2,65 +2,62 @@
 
 namespace Sparors\Ussd;
 
+use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\ServiceProvider;
 use Sparors\Ussd\Commands\ActionCommand;
+use Sparors\Ussd\Commands\ActionMakeCommand;
+use Sparors\Ussd\Commands\ConfiguratorCommand;
+use Sparors\Ussd\Commands\ConfiguratorMakeCommand;
+use Sparors\Ussd\Commands\DecisionCommand;
+use Sparors\Ussd\Commands\DecisionMakeCommand;
+use Sparors\Ussd\Commands\ExceptionHandlerCommand;
+use Sparors\Ussd\Commands\ExceptionHandlerMakeCommand;
+use Sparors\Ussd\Commands\ResponseCommand;
+use Sparors\Ussd\Commands\ResponseMakeCommand;
 use Sparors\Ussd\Commands\StateCommand;
+use Sparors\Ussd\Commands\StateMakeCommand;
 
 class UssdServiceProvider extends ServiceProvider
 {
-    /**
-     * Perform post-registration booting of services.
-     *
-     * @return void
-     */
+    /** @return void */
     public function boot()
     {
-        // Publishing is only necessary when using the CLI.
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
         }
     }
 
-    /**
-     * Register any package services.
-     *
-     * @return void
-     */
+    /** @return void */
     public function register()
     {
         $this->mergeConfigFrom(__DIR__.'/../config/ussd.php', 'ussd');
-        // Register the service the package provides.
-        $this->app->singleton('ussd', function ($app) {
-            return new Ussd($app);
-        });
     }
 
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return ['ussd'];
-    }
-
-    /**
-     * Console-specific booting.
-     *
-     * @return void
-     */
+    /** @return void */
     protected function bootForConsole()
     {
-        // Publishing the configuration file.
         $this->publishes([
             __DIR__.'/../config/ussd.php' => config_path('ussd.php'),
         ], 'ussd-config');
 
-        // Registering package commands.
         $this->commands([
             StateCommand::class,
+            StateMakeCommand::class,
             ActionCommand::class,
+            ActionMakeCommand::class,
+            ResponseCommand::class,
+            ResponseMakeCommand::class,
+            DecisionCommand::class,
+            DecisionMakeCommand::class,
+            ConfiguratorCommand::class,
+            ConfiguratorMakeCommand::class,
+            ExceptionHandlerCommand::class,
+            ExceptionHandlerMakeCommand::class,
+        ]);
+
+        AboutCommand::add('USSD', [
+            'Namespace' => config('ussd.namespace'),
+            'Record Store' => config('ussd.record_store') ?? config('cache.default'),
         ]);
     }
 }

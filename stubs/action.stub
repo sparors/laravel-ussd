@@ -1,0 +1,13 @@
+<?php
+
+namespace {{ namespace }};
+
+use Sparors\Ussd\Contracts\Action;
+
+class {{ class }} implements Action
+{
+    public function execute(): string
+    {
+        //
+    }
+}

@@ -2,47 +2,33 @@
 
 namespace Sparors\Ussd\Commands;
 
-use Illuminate\Support\Facades\File;
-
-class StateCommand extends GenerateCommand
+class StateCommand extends GeneratorCommand
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'ussd:state {name}';
+    protected $type = 'USSD State';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Create a new ussd state';
+    protected $description = 'Create a new USSD state class';
 
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
-    public function handle()
+    protected $signature = 'ussd:state
+                            {name : The name of the USSD State}
+                            {--init : Create the class as an initial USSD state}
+                            {--cont : Create the class as a continuing USSD state}
+                            {--force : Create the class even if USSD state already exists}';
+
+    protected function getStub()
     {
-        $namespace = config('ussd.state_namespace', 'App\Http\Ussd\States');
-        $name = $this->argument('name');
-
-        if (! File::exists($this->pathFromNamespace($namespace, $name))) {
-            $content = preg_replace_array(
-                ['/\[namespace\]/', '/\[class\]/'],
-                [$this->classNamespace($namespace, $name), $this->className($name)],
-                file_get_contents(__DIR__.'/state.stub')
-            );
-
-            $this->ensureDirectoryExists($namespace, $name);
-            File::put($this->pathFromNamespace($namespace, $name), $content);
-
-            $this->info($this->className($name).' state created successfully');
-        } else {
-            $this->error('File already exists !');
+        if ($this->option('init')) {
+            return __DIR__.'/../../stubs/state.init.stub';
         }
+
+        if ($this->option('cont')) {
+            return __DIR__.'/../../stubs/state.cont.stub';
+        }
+
+        return __DIR__.'/../../stubs/state.stub';
+    }
+
+    protected function getDefaultNamespace($rootNamespace)
+    {
+        return $this->extendNamespace('States');
     }
 }

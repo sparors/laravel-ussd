@@ -1,0 +1,20 @@
+<?php
+
+namespace {{ namespace }};
+
+use Sparors\Ussd\Menu;
+use Sparors\Ussd\Decisions\Equal;
+use Sparors\Ussd\Contracts\ContinueState;
+
+class {{ class }} implements ContinueState
+{
+    public function render(): Menu
+    {
+        return Menu::build()->line('1.Continue');
+    }
+
+    public function confirm(): Decision
+    {
+        return new Equal(1);
+    }
+}

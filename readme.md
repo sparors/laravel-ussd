@@ -2,7 +2,7 @@
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Total Downloads][ico-downloads]][link-downloads]
-[![Build Status][ico-travis]][link-travis]
+[![Build Status][ico-github]][link-github]
 
 Build Ussd (Unstructured Supplementary Service Data) applications with laravel without breaking a sweat.
 
@@ -11,7 +11,13 @@ Build Ussd (Unstructured Supplementary Service Data) applications with laravel w
 You can install the package via composer:
 
 ``` bash
-composer require sparors/laravel-ussd
+composer require sparors/laravel-ussd:^3
+```
+
+For older version use
+
+``` bash
+composer require sparors/laravel-ussd:^2
 ```
 
 Laravel Ussd provides zero configuration out of the box. To publish the config, run the vendor publish command:
@@ -22,250 +28,207 @@ php artisan vendor:publish --provider="Sparors\Ussd\UssdServiceProvider" --tag=u
 
 ## Usage
 
-### Creating States
+For older version look here: [V2 README](./v2.readme.md)
 
-We provide a ussd artisan command which allows you to quickly create new states.
+### Creating USSD menus
 
-``` bash
-php artisan ussd:state Welcome
-```
-
-### Creating Nested States
-
-Linux/Unix
-
-``` bash
-php artisan ussd:state Airtime/Welcome
-```
-
-Windows
-
-``` bash
-php artisan ussd:state Airtime\Welcome
-```
-
-Welcome state class generated
-
-``` php
+```php
 <?php
 
-namespace App\Http\Ussd\States;
+namespace App\Ussd\States;
 
-use Sparors\Ussd\State;
+use App\Ussd\Actions\TransferAccountAction;
+use Sparors\Ussd\Attributes\Paginate;
+use Sparors\Ussd\Attributes\Transition;
+use Sparors\Ussd\Context;
+use Sparors\Ussd\Contracts\State;
+use Sparors\Ussd\Decisions\Equal;
+use Sparors\Ussd\Decisions\Fallback;
+use Sparors\Ussd\Decisions\In;
+use Sparors\Ussd\Menu;
+use Sparors\Ussd\Record;
+use Sparors\Ussd\Traits\WithPagination;
 
-class Welcome extends State
+#[Transition(to: TransferAccountAction::class, match: new Equal(1))]
+#[Transition(to: TransferAmountState::class, match: new In(2, 3), callback: [self::class, 'setTransferType'])]
+#[Transition(to: NewAccountNameState::class, match: new Equal(4))]
+#[Transition(to: HelplineState::class, match: new Equal(5))]
+#[Transition(to: InvalidInputState::class, match: new Fallback())]
+#[Paginate(next: new Equal('#'), previous: new Equal('0'))]
+class CustomerMenuState implements State
 {
-    protected function beforeRendering(): void
+    use WithPagination;
+
+    public function render(): Menu
     {
-       //
-    }
-
-    protected function afterRendering(string $argument): void
-    {
-        //
-    }
-}
-```
-
-### Creating Actions
-
-> Available from **v2.0.0**
-
-We provide a ussd artisan command which allows you to quickly create new actions.
-
-``` bash
-php artisan ussd:action MakePayment
-```
-
-MakePayment action class generated
-
-``` php
-<?php
-
-namespace App\Http\Ussd\Actions;
-
-use Sparors\Ussd\Action;
-
-class MakePayment extends Action
-{
-    public function run(): string
-    {
-        return ''; // The state after this
-    }
-}
-```
-
-Run your logic and return the next state's fully qualified class name
-
-``` php
-<?php
-
-namespace App\Http\Ussd\Actions;
-
-use Sparors\Ussd\Action;
-use App\Http\Ussd\States\PaymentSuccess;
-use App\Http\Ussd\States\PaymentError;
-
-class MakePayment extends Action
-{
-    public function run(): string
-    {
-        $response = Http::post('/payment', [
-            'phone_number' => $this->record->phoneNumber
-        ]);
-
-        if ($response->ok()) {
-            return PaymentSuccess::class;
-        }
-
-        return PaymentError::class;
-    }
-}
-```
-
-### Creating Menus
-
-Add your menu to the beforeRendering method
-
-``` php
-<?php
-
-namespace App\Http\Ussd\States;
-
-use Sparors\Ussd\State;
-
-class Welcome extends State
-{
-    protected function beforeRendering(): void
-    {
-        $name = $this->record->name;
-
-        $this->menu->text('Welcome To Laravel USSD')
-            ->lineBreak(2)
-            ->line('Select an option')
-            ->listing([
-                'Airtime Topup',
-                'Data Bundle',
-                'TV Subscription',
-                'ECG/GWCL',
-                'Talk To Us'
-            ])
-            ->lineBreak(2)
+        return Menu::build()
+            ->line('Banc')
+            ->listing($this->getItems(), page: $this->currentPage(), perPage: $this->perPage())
+            ->when($this->hasPreviousPage(), fn (Menu $menu) => $menu->line('0. Previous'))
+            ->when($this->hasNextPage(), fn (Menu $menu) => $menu->line('#. Next'))
             ->text('Powered by Sparors');
     }
 
-    protected function afterRendering(string $argument): void
+    public function setTransferType(Context $context, Record $record)
     {
-        //
+        $transferType = '2' === $context->input() ? 'deposit' : 'withdraw';
+
+        $record->set('transfer_type', $transferType);
+    }
+
+    public function getItems(): array
+    {
+        return [
+            'Transfer',
+            'Deposit',
+            'Withdraw',
+            'New Account',
+            'Helpline',
+        ];
+    }
+
+    public function perPage(): int
+    {
+        return 3;
     }
 }
 ```
 
-### Linking States with Decisions
-
-Add your decision to the afterRendering method and link them with states
+An example of a final state
 
 ``` php
 <?php
 
-namespace App\Http\Ussd\States;
+namespace App\Ussd\States;
 
-use App\Http\Ussd\States\GetRecipientNumber;
-use App\Http\Ussd\States\MaintenanceMode;
-use App\Http\Ussd\States\Error;
-use Sparors\Ussd\State;
+use Sparors\Ussd\Attributes\Terminate;
+use Sparors\Ussd\Contracts\State;
+use Sparors\Ussd\Menu;
+use Sparors\Ussd\Record;
 
-class Welcome extends State
+#[Terminate]
+class GoodByeState implements State
 {
-    protected function beforeRendering(): void
+    public function render(Record $record): Menu
     {
-       $this->menu->text('Welcome To Laravel Ussd')
-            ->lineBreak(2)
-            ->line('Select an option')
-            ->listing([
-                'Airtime Topup',
-                'Data Bundle',
-                'TV Subscription',
-                'ECG/GWCL',
-                'Talk To Us'
-            ])
-            ->lineBreak(2)
-            ->text('Powered by Sparors');
-    }
-
-    protected function afterRendering(string $argument): void
-    {
-        // If input is equal to 1, 2, 3, 4 or 5, render the appropriate state
-        $this->decision->equal('1', GetRecipientNumber::class)
-                       ->between(2, 5, MaintenanceMode::class)
-                       ->any(Error::class);
+       return Menu::build()->text('Bye bye ' . $record->get('name'));
     }
 }
 ```
 
-### Setting Initial State
-
-Import the welcome state class and pass it to the setInitialState method
+Due to some limitation with PHP 8.0, you can not pass class instance to attributes. So to overcome this limitation, you can pass an array with the full class path as the first element and the rest should be argument required. eg.
 
 ``` php
+<?php
+
+namespace App\Ussd\States;
+
+use Sparors\Ussd\Attributes\Transition;
+use Sparors\Ussd\Contracts\State;
+use Sparors\Ussd\Menu;
+
+#[Transition(MakePaymentAction::class, [Equal::class, 1])]
+#[Transition(InvalidInputState::class, Fallback::class)]
+class WelcomeState implements State
+{
+    public function render(): Menu
+    {
+       return Menu::build()->text('Welcome');
+    }
+}
+```
+
+### Building USSD
+
+```php
 <?php
 
 namespace App\Http\Controllers;
 
-use Sparors\Ussd\Facades\Ussd;
-use App\Http\Ussd\States\Welcome;
+use App\Ussd\Actions\MenuAction;
+use App\Ussd\Responses\AfricasTalkingResponse;
+use App\Ussd\States\WouldYouLikeToContinueState;
+use Illuminate\Http\Request;
+use Sparors\Ussd\Context;
+use Sparors\Ussd\ContinuingMode;
+use Sparors\Ussd\Ussd;
 
 class UssdController extends Controller
 {
-    public function index()
+    public function __invoke(Request $request)
     {
-        $ussd = Ussd::machine()
-            ->setFromRequest([
-                'network',
-                'phone_number' => 'msisdn',
-                'sessionId' => 'UserSessionID',
-                'input' => 'msg'
-            ])
-          ->setInitialState(Welcome::class)
-          ->setResponse(function (string $message, string $action) {
-                return [
-                    'USSDResp' => [
-                        'action' => $action,
-                        'menus' => '',
-                        'title' => $message
-                    ]
-                ];
-            });
+        $lastText = $request->input('text') ?? '';
 
-        return response()->json($ussd->run());
+        if (strlen($lastText) > 0) {
+            $lastText = explode('*', $lastText);
+            $lastText = end($lastText);
+        }
+
+        return Ussd::build(
+            Context::create(
+                $request->input('sessionId'),
+                $request->input('phoneNumber'),
+                $lastText
+            )
+            ->with(['phone_number' => $request->input('phoneNumber')])
+        )
+        ->useInitialState(MenuAction::class)
+        ->useContinuingState(ContinuingMode::CONFIRM, now()->addMinute(), WouldYouLikeToContinueState::class)
+        ->useResponse(AfricasTalkingResponse::class)
+        ->run();
     }
 }
 ```
 
-### Simplifying machine with configurator
+### Conditional Branching
 
-> Available from **v2.5.0**
+Use USSD action to conditional decide which state should be the next.
 
-You can use configurator to simplify repetitive parts of your application so they can be shared easily. Just implement and `Sparors\Ussd\Contracts\Configurator` interface and use it in your machine.
+``` php
+<?php
+
+namespace App\Http\Ussd\Actions;
+
+use Sparors\Ussd\Contracts\Action;
+use App\Http\Ussd\States\PaymentSuccessState;
+use App\Http\Ussd\States\PaymentErrorState;
+
+class MakePayment extends Action
+{
+    public function execute(Record $record): string
+    {
+        $response = Http::post('/payment', [
+            'phone_number' => $record->phoneNumber
+        ]);
+
+        if ($response->ok()) {
+            return PaymentSuccessState::class;
+        }
+
+        return PaymentErrorState::class;
+    }
+}
+```
+
+### Group logic with USSD configurator
+
+You can use configurator to simplify repetitive parts of your application so they can be shared easily.
+
 ```php
 <?php
 
+namespace App\Http\Ussd\Configurators;
+
 use Sparors\Ussd\Contracts\Configurator;
 
-// Creating a configurator in eg. App\Http\Ussd\Configurators\Nsano.php
 class Nsano implements Configurator
 {
-    public function configure(Machine $machine): void
+    public function configure(Ussd $ussd): void
     {
-        $machine->setFromRequest([
-                'network',
-                'phone_number' => 'msisdn',
-                'sessionId' => 'UserSessionID',
-                'input' => 'msg'
-        ])->setResponse(function (string $message, string $action) {
+        $ussd->setResponse(function (string $message, int $terminating) {
             return [
                 'USSDResp' => [
-                    'action' => $action,
+                    'action' => $termination ? 'prompt': 'input',
                     'menus' => '',
                     'title' => $message
                 ]
@@ -275,80 +238,68 @@ class Nsano implements Configurator
 }
 ?>
 ```
-```php
-<?php
-
-namespace App\Http\Controllers;
-
-use Sparors\Ussd\Facades\Ussd;
-use App\Http\Ussd\States\Welcome;
-use App\Http\Ussd\Configurators\Nsano'
-
-// Using it in a controller
-class UssdController extends Controller
-{
-    public function index()
-    {
-        $ussd = Ussd::machine()
-            ->useConfigurator(Nsano::class)
-            ->setInitialState(Welcome::class);
-
-        return response()->json($ussd->run());
-    }
-}
-?>
-```
-
-
-### Running the application
-
-You can use the development server the ships with Laravel by running, from the project root:
-
-``` bash
-php artisan serve
-```
-You can visit [http://localhost:8000](http://localhost:8000) to see the application in action.
-
-Enjoy!!!
-
-### Documentation
-
-You'll find the documentation on [https://sparors.github.io/ussd-docs](https://sparors.github.io/ussd-docs/).
-
 
 ### Testing
 
-``` bash
-$ vendor/bin/phpunit
+You can easily test how your ussd application with our testing utilities
+
+``` php
+<?php
+
+namespace App\Tests\Feature;
+
+use Sparors\Ussd\Ussd;
+
+final class UssdTest extends TestCase
+{
+    public function test_ussd_runs()
+    {
+        Ussd::test(WelcomeState::class)
+            ->additional(['network' => 'MTN', 'phone_number' => '123123123'])
+            ->actingAs('isaac')
+            ->start()
+            ->assertSee('Welcome...')
+            ->assertContextHas('network', 'MTN')
+            ->assertContextHas('phone_number')
+            ->assertContextMissing('name')
+            ->input('1')
+            ->assertSee('Now see the magic...')
+            ->assertRecordHas('choice');
+    }
+}
 ```
 
-### Change log
+## Documentation
+
+You'll find the documentation on [https://github.com/sparors/laravel-ussd/wiki](https://github.com/sparors/laravel-ussd/wiki) for V3 and [https://sparors.github.io/ussd-docs](https://sparors.github.io/ussd-docs/) for V2.
+
+## Change log
 
 Please see the [changelog](changelog.md) for more information on what has changed recently.
 
-### Contributing
+## Contributing
 
 Please see [contributing.md](contributing.md) for details and a todolist.
 
-### Security
+## Security
 
 If you discover any security related issues, please email isaacsai030@gmail.com instead of using the issue tracker.
 
-### Credits
+## Credits
 
 - [Sparors Inc][link-author]
 - [All Contributors][link-contributors]
 
-### License
+## License
 
 MIT. Please see the [license file](LICENSE) for more information.
 
 [ico-version]: https://img.shields.io/packagist/v/sparors/laravel-ussd.svg?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/sparors/laravel-ussd.svg?style=flat-square
-[ico-travis]: https://img.shields.io/travis/sparors/laravel-ussd/master.svg?style=flat-square
+[ico-github]: https://img.shields.io/github/actions/workflow/status/sparors/laravel-ussd/php.yml?style=flat-square
 
 [link-packagist]: https://packagist.org/packages/sparors/laravel-ussd
 [link-downloads]: https://packagist.org/packages/sparors/laravel-ussd
-[link-travis]: https://travis-ci.com/sparors/laravel-ussd
+[link-github]: https://github.com/sparors/laravel-ussd/actions/workflows/php.yml
 [link-author]: https://github.com/sparors
 [link-contributors]: ../../contributors
