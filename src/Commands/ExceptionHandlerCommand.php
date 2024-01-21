@@ -19,6 +19,6 @@ class ExceptionHandlerCommand extends GeneratorCommand
 
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $this->extendNamespace('ExceptionHandlers');
+        return $this->extendNamespace('');
     }
 }

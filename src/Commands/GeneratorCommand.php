@@ -10,6 +10,6 @@ abstract class GeneratorCommand extends BaseCommand
     {
         $namespace = trim(config('ussd.namespace', 'App\Ussd'), '\\');
 
-        return "{$namespace}\\{$extension}";
+        return $extension ? "{$namespace}\\{$extension}" : $namespace;
     }
 }

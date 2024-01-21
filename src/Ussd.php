@@ -78,6 +78,8 @@ class Ussd
     public function useContext(Context $context)
     {
         $this->context = $context;
+
+        return $this;
     }
 
     public function useConfigurator(Configurator|string $configurator): static
