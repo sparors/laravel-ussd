@@ -11,7 +11,7 @@ Build Ussd (Unstructured Supplementary Service Data) applications with laravel w
 You can install the package via composer:
 
 ``` bash
-composer require sparors/laravel-ussd:^3.0-beta.1
+composer require sparors/laravel-ussd:^3.0-beta
 ```
 
 For older version use
