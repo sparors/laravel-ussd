@@ -116,7 +116,7 @@ class GoodByeState implements State
 }
 ```
 
-Due to some limitation with PHP 8.0, you can not pass class instance to attributes. So to other come this limitation, you can pass an array with the full class path as the first element and the rest should be argument required. eg.
+Due to some limitation with PHP 8.0, you can not pass class instance to attributes. So to overcome this limitation, you can pass an array with the full class path as the first element and the rest should be argument required. eg.
 
 ``` php
 <?php
