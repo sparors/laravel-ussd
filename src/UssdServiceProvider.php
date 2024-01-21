@@ -19,19 +19,22 @@ use Sparors\Ussd\Commands\StateMakeCommand;
 
 class UssdServiceProvider extends ServiceProvider
 {
-    public function boot(): void
+    /** @return void */
+    public function boot()
     {
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
         }
     }
 
-    public function register(): void
+    /** @return void */
+    public function register()
     {
         $this->mergeConfigFrom(__DIR__.'/../config/ussd.php', 'ussd');
     }
 
-    protected function bootForConsole(): void
+    /** @return void */
+    protected function bootForConsole()
     {
         $this->publishes([
             __DIR__.'/../config/ussd.php' => config_path('ussd.php'),
