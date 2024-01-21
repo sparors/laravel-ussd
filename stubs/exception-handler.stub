@@ -1,0 +1,14 @@
+<?php
+
+namespace {{ namespace }};
+
+use Exception;
+use Sparors\Ussd\Contracts\ExceptionHandler;
+
+class {{ class }} implements ExceptionHandler
+{
+    public function handle(Exception $exception): string
+    {
+        return $exception->getMessage();
+    }
+}

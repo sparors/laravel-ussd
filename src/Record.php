@@ -2,227 +2,121 @@
 
 namespace Sparors\Ussd;
 
-use Illuminate\Contracts\Cache\Repository as Cache;
+use DateInterval;
+use DateTimeInterface;
+use Illuminate\Contracts\Cache\Repository;
+use Illuminate\Support\Facades\Cache;
 
 class Record
 {
-    /** @var Cache */
-    protected $cache;
+    private Repository $repository;
 
-    /** @var string */
-    protected $id;
-
-    public function __construct(Cache $cache, $id)
-    {
-        $this->cache = $cache;
-        $this->id = $id;
+    public function __construct(
+        ?string $store,
+        private string $uid,
+        private string $gid
+    ) {
+        $this->repository = Cache::store($store);
     }
 
-    /**
-     * @param string $key
-     * @return string
-     */
-    protected function getKey($key)
+    public function __set(string $name, mixed $value): void
     {
-        return "ussd_$this->id.$key";
+        $this->set($name, $value);
     }
 
-    /**
-     * @param int $ttl
-     * @return \DateTimeInterface|\DateInterval|int|null
-     */
-    protected function getTtl($ttl)
+    public function __get(string $name): mixed
     {
-        return $ttl ?? config('ussd.cache_ttl');
+        return $this->get($name);
     }
 
-    /**
-     * @param string $default
-     * @return mixed
-     */
-    protected function getDefault($default)
-    {
-        return $default ?? config('ussd.cache_default');
-    }
-
-    /**
-     * @param array $keys
-     * @return array
-     */
-    protected function getKeys($keys)
-    {
-        return array_map(
-            function ($key) {
-                return $this->getKey($key);
-            },
-            $keys
-        );
-    }
-
-    /**
-     * @param array $values
-     * @return array
-     */
-    protected function getValues($values)
-    {
-        $newValues = [];
-        foreach ($values as $key => $value) {
-            $newValues[$this->getKey($key)] = $value;
-        }
-
-        return $newValues;
-    }
-
-    /**
-    * Determine if an item exists in the cache.
-    *
-    * @param  string  $key
-    * @return bool
-    */
-    public function has($key)
-    {
-        return $this->cache->has($this->getKey($key));
-    }
-
-    /**
-     * Store an item in the record.
-     *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @param  \DateTimeInterface|\DateInterval|int|null  $ttl
-     * @return bool
-     */
-    public function set($key, $value, $ttl = null)
-    {
-        return $this->cache->set($this->getKey($key), $value, $this->getTtl($ttl));
-    }
-
-    /**
-     * Store multiple items in the cache for a given number of seconds.
-     *
-     * @param  array  $values
-     * @param  \DateTimeInterface|\DateInterval|int|null  $ttl
-     * @return bool
-     */
-    public function setMultiple($values, $ttl = null)
-    {
-        return $this->cache->setMultiple($this->getValues($values), $this->getTtl($ttl));
-    }
-
-    /**
-     * Retrieve an item from the cache by key.
-     *
-     * @param  string  $key
-     * @param  mixed  $default
-     * @return mixed
-     */
-    public function get($key, $default = null)
-    {
-        return $this->cache->get($this->getKey($key), $this->getDefault($default));
-    }
-
-    /**
-     * Retrieve multiple items from the cache by key.
-     *
-     * Items not found in the cache will have a null value.
-     *
-     * @param  array  $keys
-     * @param string $default
-     * @return array
-     */
-    public function getMultiple($keys, $default = null)
-    {
-        return array_values(
-            (array) $this->cache->getMultiple($this->getKeys($keys), $this->getDefault($default))
-        );
-    }
-
-    /**
-     * Remove an item from the cache.
-     *
-     * @param  string  $key
-     * @return bool
-     */
-    public function delete($key)
-    {
-        return $this->cache->delete($this->getKey($key));
-    }
-
-    /**
-     * Remove an item from the cache
-     *
-     * @param  string  $key
-     * @return bool
-     */
-    public function deleteMultiple($keys)
-    {
-        return $this->cache->deleteMultiple($this->getKeys($keys));
-    }
-
-    /**
-     * Increment the value of an item in the cache.
-     *
-     * @since v2.0.0
-     * @param  string  $key
-     * @param  mixed  $value
-     * @return int|bool
-     */
-    public function increment($key, $value = 1)
-    {
-        return $this->cache->increment($this->getKey($key), $value);
-    }
-
-    /**
-     * Decrement the value of an item in the cache.
-     *
-     * @since v2.0.0
-     * @param  string  $key
-     * @param  mixed  $value
-     * @return int|bool
-     */
-    public function decrement($key, $value = 1)
-    {
-        return $this->cache->decrement($this->getKey($key), $value);
-    }
-
-    /**
-     * Remove all items from the cache.
-     *
-     * @return bool
-     */
-    public function flush()
-    {
-        return $this->cache->clear();
-    }
-
-    public function __set($name, $value)
-    {
-        $this->set($name, $value, config('ussd.cache_ttl'));
-    }
-
-    public function __get($name)
-    {
-        return $this->get($name, config('ussd.cache_default'));
-    }
-
-    public function __isset($name)
+    public function __isset(string $name): bool
     {
         return $this->has($name);
     }
 
-    public function __unset($name)
+    public function __unset(string $name): void
     {
-        return $this->delete($name);
+        $this->forget($name);
     }
 
-    public function __invoke($argument)
+    public function __invoke(array|string $argument): mixed
     {
         if (is_string($argument)) {
-            return $this->get($argument, config('ussd.cache_default'));
+            return $this->get($argument);
         }
 
         if (is_array($argument)) {
-            $this->setMultiple($argument, config('ussd.cache_ttl'));
+            return $this->setMany($argument);
         }
+    }
+
+    public function has(string $key, bool $public = false): bool
+    {
+        return $this->repository->has($this->id($key, $public));
+    }
+
+    public function set(
+        string $key,
+        mixed $value,
+        null|DateInterval|DateTimeInterface|int $ttl = null,
+        bool $public = false
+    ): bool {
+        return $this->repository->set($this->id($key, $public), $value, $ttl);
+    }
+
+    public function setMany(
+        array $values,
+        null|DateInterval|DateTimeInterface|int $ttl = null,
+        bool $public = false
+    ): bool {
+        $newValues = [];
+
+        foreach ($values as $key => $value) {
+            $newValues[$this->id($key, $public)] = $value;
+        }
+
+        return $this->repository->setMultiple($newValues, $ttl);
+    }
+
+    public function get(string $key, mixed $default = null, bool $public = false): mixed
+    {
+        return $this->repository->get($this->id($key, $public), $default);
+    }
+
+    public function getMany(array $keys, mixed $default = null, bool $public = false): array
+    {
+        return array_values(
+            (array) $this->repository->getMultiple($this->ids($keys, $public), $default)
+        );
+    }
+
+    public function increment(string $key, mixed $value = 1, bool $public = false): bool|int
+    {
+        return $this->repository->increment($this->id($key, $public), $value);
+    }
+
+    public function decrement(string $key, mixed $value = 1, bool $public = false): bool|int
+    {
+        return $this->repository->decrement($this->id($key, $public), $value);
+    }
+
+    public function forget(string $key, bool $public = false): bool
+    {
+        return $this->repository->delete($this->id($key, $public));
+    }
+
+    public function forgetMany(array $keys, bool $public = false): bool
+    {
+        return $this->repository->deleteMultiple($this->ids($keys, $public));
+    }
+
+    private function id(string $key, bool $public): string
+    {
+        return 'ussd:'.($public ? $this->gid : $this->uid).":{$key}";
+    }
+
+    private function ids(array $keys, bool $public): array
+    {
+        return array_map(fn ($key) => $this->id($key, $public), $keys);
     }
 }

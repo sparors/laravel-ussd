@@ -4,62 +4,25 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | State Class Namespace
+    | USSD Namespace
     |--------------------------------------------------------------------------
     |
-    | This value sets the root namespace for Ussd State component classes in
-    | your application.
+    | This sets the root namespace for USSD component classes.
     |
     */
 
-    'state_namespace' => env('USSD_STATE_NS', 'App\\Http\\Ussd\\States'),
+    'namespace' => env('USSD_NAMESPACE', 'App\Ussd'),
 
-    /*
-    |--------------------------------------------------------------------------
-    | Action Class Namespace
-    |--------------------------------------------------------------------------
-    |
-    | This value sets the root namespace for Ussd Action component classes in
-    | your application.
-    |
-    */
-
-    'action_namespace' => env('USSD_ACTION_NS', 'App\\Http\\Ussd\\Actions'),
 
      /*
     |--------------------------------------------------------------------------
-    | Store
+    | Record Store
     |--------------------------------------------------------------------------
     |
-    | This value sets the default store to use for the ussd record.
-    | The store can be found in your cache stores config
+    | This sets the cache store to be used by USSD Record.
     |
     */
 
-    'cache_store' => env('USSD_STORE', null),
+    'record_store' => env('USSD_STORE'),
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Time to live
-    |--------------------------------------------------------------------------
-    |
-    | This value sets the default for how long the record values are to
-    | be cached in your application when not specified.
-    |
-    */
-
-    'cache_ttl' => env('USSD_TTL', null),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Default value
-    |--------------------------------------------------------------------------
-    |
-    | This value return the default store value when a given cache key
-    | is not found
-    |
-    */
-
-    'cache_default' => env('USSD_DEFAULT_VALUE', null),
 ];
