@@ -7,7 +7,7 @@ use Sparors\Ussd\Contracts\Decision;
 class GreaterThan implements Decision
 {
     public function __construct(
-        private string|int|float $expected
+        private float|int|string $expected
     ) {
     }
 

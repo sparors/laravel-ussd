@@ -9,9 +9,9 @@ use Sparors\Ussd\Contracts\Decision;
 final class Paginate
 {
     public function __construct(
-        public string|array|Decision $next,
-        public null|string|array|Decision $previous = null,
-        public null|string|array $callback = null
+        public array|Decision|string $next,
+        public null|array|Decision|string $previous = null,
+        public null|array|string $callback = null
     ) {
     }
 }

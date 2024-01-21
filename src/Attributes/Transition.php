@@ -10,8 +10,8 @@ final class Transition
 {
     public function __construct(
         public string $to,
-        public string|array|Decision $match,
-        public null|string|array $callback = null
+        public array|Decision|string $match,
+        public null|array|string $callback = null
     ) {
     }
 }

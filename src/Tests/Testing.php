@@ -7,19 +7,19 @@ use DateInterval;
 use DateTimeInterface;
 use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use JsonSerializable;
-use Sparors\Ussd\Contracts\Response;
-use Sparors\Ussd\Contracts\Configurator;
-use Sparors\Ussd\Contracts\InitialState;
-use Sparors\Ussd\Contracts\ContinueState;
-use Sparors\Ussd\Contracts\ExceptionHandler;
 use PHPUnit\Framework\Assert;
 use ReflectionFunction;
 use Sparors\Ussd\Context;
+use Sparors\Ussd\Contracts\Configurator;
+use Sparors\Ussd\Contracts\ContinueState;
+use Sparors\Ussd\Contracts\ExceptionHandler;
 use Sparors\Ussd\Contracts\InitialAction;
+use Sparors\Ussd\Contracts\InitialState;
+use Sparors\Ussd\Contracts\Response;
 use Sparors\Ussd\Record;
 use Sparors\Ussd\Ussd;
 
@@ -29,20 +29,21 @@ class Testing
     private array $actors;
 
     public function __construct(
-        private string|InitialState|InitialAction $initialState,
+        private InitialAction|InitialState|string $initialState,
         private int $continuingMode,
-        private null|int|DateInterval|DateTimeInterface $continuingTtl,
-        private null|string|ContinueState $continuingState,
+        private null|DateInterval|DateTimeInterface|int $continuingTtl,
+        private null|ContinueState|string $continuingState,
         private ?string $storeName,
         private array $additional,
         private array $uses,
-        private string $actor
+        private string $actor,
+        private string $startInput
     ) {
         $this->actors[$actor] = [Str::random(), Str::random(), ''];
-        $this->dispatch('');
+        $this->dispatch($startInput);
     }
 
-    public function assertContextHas(string $key, $value = null)
+    public function assertContextHas(string $key, $value = null): static
     {
         $this->preventStaleAssertion();
 
@@ -62,7 +63,7 @@ class Testing
         return $this;
     }
 
-    public function assertContextMissing(string $key)
+    public function assertContextMissing(string $key): static
     {
         $this->preventStaleAssertion();
 
@@ -76,7 +77,7 @@ class Testing
         return $this;
     }
 
-    public function assertRecordHas(string $key, $value = null)
+    public function assertRecordHas(string $key, $value = null): static
     {
         $this->preventStaleAssertion();
 
@@ -96,7 +97,7 @@ class Testing
         return $this;
     }
 
-    public function assertRecordMissing(string $key)
+    public function assertRecordMissing(string $key): static
     {
         $this->preventStaleAssertion();
 
@@ -110,7 +111,7 @@ class Testing
         return $this;
     }
 
-    public function assertSee(string $value)
+    public function assertSee(string $value): static
     {
         $item = $this->actors[$this->actor][2];
 
@@ -131,7 +132,7 @@ class Testing
         return $this;
     }
 
-    public function actingAs(string $key)
+    public function actingAs(string $key): static
     {
         $this->actor = $key;
 
@@ -145,7 +146,7 @@ class Testing
         return $this;
     }
 
-    public function wait(int|DateInterval|DateTimeInterface $ttl)
+    public function wait(DateInterval|DateTimeInterface|int $ttl): static
     {
         if ($ttl instanceof DateTimeInterface) {
             $ttl = Carbon::now()->diffInSeconds($ttl);
@@ -160,7 +161,7 @@ class Testing
         return $this;
     }
 
-    public function timeout(null|int|DateInterval|DateTimeInterface $ttl = null)
+    public function timeout(null|DateInterval|DateTimeInterface|int $ttl = null, ?string $input = null): static
     {
         if ($ttl) {
             $this->wait($ttl);
@@ -168,19 +169,19 @@ class Testing
 
         $this->actors[$this->actor][0] = Str::random();
 
-        $this->dispatch('');
+        $this->dispatch($input ?? $this->startInput);
 
         return $this;
     }
 
-    public function input(string $input)
+    public function input(string $input): static
     {
         $this->dispatch($input);
 
         return $this;
     }
 
-    private function dispatch(string $input)
+    private function dispatch(string $input): void
     {
         [$uid, $gid] = $this->actors[$this->actor];
 
@@ -196,7 +197,7 @@ class Testing
         $this->switched = false;
     }
 
-    private function applyUses(Ussd $ussd)
+    private function applyUses(Ussd $ussd): void
     {
         foreach ($this->uses as $use) {
             if (is_string($use)) {
@@ -234,8 +235,6 @@ class Testing
 
             throw new InvalidArgumentException('Invalid use provided.');
         }
-
-        return $this;
     }
 
     private function preventStaleAssertion(): void

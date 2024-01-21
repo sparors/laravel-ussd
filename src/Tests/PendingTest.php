@@ -7,12 +7,12 @@ use DateInterval;
 use DateTimeInterface;
 use Illuminate\Support\Str;
 use Sparors\Ussd\ContinuingMode;
-use Sparors\Ussd\Contracts\Response;
 use Sparors\Ussd\Contracts\Configurator;
-use Sparors\Ussd\Contracts\InitialState;
 use Sparors\Ussd\Contracts\ContinueState;
 use Sparors\Ussd\Contracts\ExceptionHandler;
 use Sparors\Ussd\Contracts\InitialAction;
+use Sparors\Ussd\Contracts\InitialState;
+use Sparors\Ussd\Contracts\Response;
 
 class PendingTest
 {
@@ -22,10 +22,10 @@ class PendingTest
     private ?string $storeName;
 
     public function __construct(
-        private string|InitialState|InitialAction $initialState,
+        private InitialAction|InitialState|string $initialState,
         private int $continuingMode = ContinuingMode::START,
-        private null|int|DateInterval|DateTimeInterface $continuingTtl = null,
-        private null|string|ContinueState $continuingState = null
+        private null|DateInterval|DateTimeInterface|int $continuingTtl = null,
+        private null|ContinueState|string $continuingState = null
     ) {
         $this->uses = [];
         $this->additional = [];
@@ -40,28 +40,28 @@ class PendingTest
         return $this;
     }
 
-    public function use(string|Configurator|Response|ExceptionHandler|Closure $use)
+    public function use(Closure|Configurator|ExceptionHandler|Response|string $use): static
     {
         $this->uses[] = $use;
 
         return $this;
     }
 
-    public function useStore(string $storeName)
+    public function useStore(string $storeName): static
     {
         $this->storeName = $storeName;
 
         return $this;
     }
 
-    public function actingAs(string $key)
+    public function actingAs(string $key): static
     {
         $this->actor = $key;
 
         return $this;
     }
 
-    public function start()
+    public function start(string $input = ''): Testing
     {
         return new Testing(
             $this->initialState,
@@ -71,7 +71,8 @@ class PendingTest
             $this->storeName,
             $this->additional,
             $this->uses,
-            $this->actor
+            $this->actor,
+            $input
         );
     }
 }

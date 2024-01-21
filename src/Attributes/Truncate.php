@@ -11,7 +11,7 @@ final class Truncate
     public function __construct(
         public int $limit,
         public string $end,
-        public string|array|Decision $more
+        public array|Decision|string $more
     ) {
     }
 }

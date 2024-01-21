@@ -13,11 +13,11 @@ class Context
         private string $gid,
         private string $input
     ) {
-        if (strlen($uid) === 0) {
+        if (0 === strlen($uid)) {
             throw new InvalidArgumentException("Unique Identifier (uid) can not be empty");
         }
 
-        if (strlen($gid) === 0) {
+        if (0 === strlen($gid)) {
             throw new InvalidArgumentException("Global Identifier (gid) can not be empty");
         }
 

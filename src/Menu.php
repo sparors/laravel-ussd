@@ -16,12 +16,17 @@ class Menu implements Stringable
     ) {
     }
 
+    public function __toString(): string
+    {
+        return $this->content;
+    }
+
     public static function build(): static
     {
         return new static('');
     }
 
-    public function append(self|callable $menu): static
+    public function append(callable|self $menu): static
     {
         if (is_callable($menu)) {
             $menu($append = new static(''));
@@ -34,7 +39,7 @@ class Menu implements Stringable
         return $this;
     }
 
-    public function prepend(self|callable $menu): static
+    public function prepend(callable|self $menu): static
     {
         if (is_callable($menu)) {
             $menu($append = new static(''));
@@ -45,10 +50,5 @@ class Menu implements Stringable
         $this->content = (string) $menu . $this->content;
 
         return $this;
-    }
-
-    public function __toString(): string
-    {
-        return $this->content;
     }
 }

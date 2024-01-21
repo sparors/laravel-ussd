@@ -8,7 +8,7 @@ class In implements Decision
 {
     private array $values;
 
-    public function __construct(string|int|float ...$values)
+    public function __construct(float|int|string ...$values)
     {
         $this->values = $values;
     }

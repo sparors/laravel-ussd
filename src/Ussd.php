@@ -3,29 +3,29 @@
 namespace Sparors\Ussd;
 
 use Closure;
-use Exception;
 use DateInterval;
-use ReflectionClass;
 use DateTimeInterface;
+use Exception;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Sparors\Ussd\Contracts\State;
-use Sparors\Ussd\Contracts\Action;
-use Illuminate\Support\Facades\App;
-use Sparors\Ussd\Attributes\Truncate;
-use Sparors\Ussd\Tests\PendingTest;
-use Sparors\Ussd\Contracts\Response;
+use ReflectionClass;
 use Sparors\Ussd\Attributes\Paginate;
 use Sparors\Ussd\Attributes\Terminate;
 use Sparors\Ussd\Attributes\Transition;
-use Sparors\Ussd\Traits\WithPagination;
+use Sparors\Ussd\Attributes\Truncate;
+use Sparors\Ussd\Contracts\Action;
 use Sparors\Ussd\Contracts\Configurator;
-use Sparors\Ussd\Contracts\InitialState;
 use Sparors\Ussd\Contracts\ContinueState;
-use Sparors\Ussd\Contracts\InitialAction;
 use Sparors\Ussd\Contracts\ExceptionHandler;
+use Sparors\Ussd\Contracts\InitialAction;
+use Sparors\Ussd\Contracts\InitialState;
+use Sparors\Ussd\Contracts\Response;
+use Sparors\Ussd\Contracts\State;
 use Sparors\Ussd\Exceptions\NextStateNotFoundException;
+use Sparors\Ussd\Tests\PendingTest;
 use Sparors\Ussd\Traits\Conditionable;
+use Sparors\Ussd\Traits\WithPagination;
 
 class Ussd
 {
@@ -41,11 +41,11 @@ class Ussd
     private Context $context;
     private ?string $storeName;
     private int $continuingMode;
-    private Response|Closure $response;
+    private Closure|Response $response;
     private ?ContinueState $continuingState;
-    private InitialState|InitialAction $initialState;
-    private null|int|DateInterval|DateTimeInterface $continuingTtl;
-    private ExceptionHandler|Closure $exceptionHandler;
+    private InitialAction|InitialState $initialState;
+    private null|DateInterval|DateTimeInterface|int $continuingTtl;
+    private Closure|ExceptionHandler $exceptionHandler;
 
     public function __construct(?Context $context)
     {
@@ -65,17 +65,21 @@ class Ussd
         $this->exceptionHandler = fn (Exception $exception) => $exception->getMessage();
     }
 
-    public static function build(?Context $context = null)
+    public static function build(?Context $context = null): static
     {
         return new static($context);
     }
 
-    public static function test(string|InitialState $initialState, int $continuingMode = ContinuingMode::START, null|int|DateInterval|DateTimeInterface $continuingTtl = null, null|string|ContinueState $continuingState = null)
-    {
+    public static function test(
+        InitialState|string $initialState,
+        int $continuingMode = ContinuingMode::START,
+        null|DateInterval|DateTimeInterface|int $continuingTtl = null,
+        null|ContinueState|string $continuingState = null
+    ): PendingTest {
         return new PendingTest($initialState, $continuingMode, $continuingTtl, $continuingState);
     }
 
-    public function useContext(Context $context)
+    public function useContext(Context $context): static
     {
         $this->context = $context;
 
@@ -99,7 +103,7 @@ class Ussd
         return $this;
     }
 
-    public function useInitialState(string|InitialState|InitialAction $initialState)
+    public function useInitialState(InitialAction|InitialState|string $initialState): static
     {
         if (is_string($initialState) && class_exists($initialState)) {
             $initialState = App::make($initialState);
@@ -116,8 +120,11 @@ class Ussd
         return $this;
     }
 
-    public function useContinuingState(int $continuingMode, null|int|DateInterval|DateTimeInterface $continuingTtl, null|string|ContinueState $continuingState = null)
-    {
+    public function useContinuingState(
+        int $continuingMode,
+        null|DateInterval|DateTimeInterface|int $continuingTtl,
+        null|ContinueState|string $continuingState = null
+    ): static {
         if (is_string($continuingState) && class_exists($continuingState)) {
             $continuingState = App::make($continuingState);
         }
@@ -144,7 +151,7 @@ class Ussd
         return $this;
     }
 
-    public function useResponse(string|Response|Closure $response)
+    public function useResponse(Closure|Response|string $response): static
     {
         if (is_string($response) && class_exists($response)) {
             $response = App::make($response);
@@ -161,7 +168,7 @@ class Ussd
         return $this;
     }
 
-    public function useExceptionHandler(string|ExceptionHandler|Closure $exceptionHandler)
+    public function useExceptionHandler(Closure|ExceptionHandler|string $exceptionHandler): static
     {
         if (is_string($exceptionHandler) && class_exists($exceptionHandler)) {
             $exceptionHandler = App::make($exceptionHandler);
@@ -178,7 +185,7 @@ class Ussd
         return $this;
     }
 
-    public function useStore(string $storeName)
+    public function useStore(string $storeName): static
     {
         $this->storeName = $storeName;
 
@@ -207,6 +214,7 @@ class Ussd
             : ($this->response)($message, $terminating);
     }
 
+    /** @return array{0: string, 1: bool} */
     private function operate(): array
     {
         App::instance($this->context::class, $this->context);
@@ -412,7 +420,7 @@ class Ussd
         throw new NextStateNotFoundException($state);
     }
 
-    private function actionable(string $class)
+    private function actionable(string $class): string
     {
         $instance = App::make($class);
 
@@ -488,9 +496,10 @@ class Ussd
 
         $attributes = $reflected->getAttributes(Terminate::class);
 
-        return count($attributes) !== 0;
+        return 0 !== count($attributes);
     }
 
+    /** @return array{0: string, 1: bool} */
     private function bail(Exception $exception): array
     {
         report($exception);

@@ -2,17 +2,22 @@
 
 namespace Sparors\Ussd\Traits;
 
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Str;
 use Sparors\Ussd\Record;
 
 trait WithPagination
 {
-    private static $cache = [];
+    private static array $cache = [];
 
-    private function lastPage(): int
+    public function __destruct()
     {
-        return ceil(count($this->getItems()) / $this->perPage());
+        static::$cache = [];
+    }
+
+    public function firstPage(): int
+    {
+        return 1;
     }
 
     public function currentPage(): int
@@ -28,6 +33,11 @@ trait WithPagination
         $page = $record->get($pageId, 1);
 
         return static::$cache[$name] = $page;
+    }
+
+    public function lastPage(): int
+    {
+        return ceil(count($this->getItems()) / $this->perPage());
     }
 
     public function isFirstPage(): int
@@ -53,9 +63,4 @@ trait WithPagination
     abstract public function getItems(): array;
 
     abstract public function perPage(): int;
-
-    public function __destruct()
-    {
-        static::$cache = [];
-    }
 }

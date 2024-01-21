@@ -19,14 +19,35 @@ class Record
         $this->repository = Cache::store($store);
     }
 
-    private function id(string $key, bool $public): string
+    public function __set(string $name, mixed $value): void
     {
-        return 'ussd:'.($public ? $this->gid : $this->uid).":{$key}";
+        $this->set($name, $value);
     }
 
-    private function ids(array $keys, bool $public): array
+    public function __get(string $name): mixed
     {
-        return array_map(fn ($key) => $this->id($key, $public), $keys);
+        return $this->get($name);
+    }
+
+    public function __isset(string $name): bool
+    {
+        return $this->has($name);
+    }
+
+    public function __unset(string $name): void
+    {
+        $this->forget($name);
+    }
+
+    public function __invoke(array|string $argument): mixed
+    {
+        if (is_string($argument)) {
+            return $this->get($argument);
+        }
+
+        if (is_array($argument)) {
+            return $this->setMany($argument);
+        }
     }
 
     public function has(string $key, bool $public = false): bool
@@ -37,7 +58,7 @@ class Record
     public function set(
         string $key,
         mixed $value,
-        null|int|DateInterval|DateTimeInterface $ttl = null,
+        null|DateInterval|DateTimeInterface|int $ttl = null,
         bool $public = false
     ): bool {
         return $this->repository->set($this->id($key, $public), $value, $ttl);
@@ -45,7 +66,7 @@ class Record
 
     public function setMany(
         array $values,
-        null|int|DateInterval|DateTimeInterface $ttl = null,
+        null|DateInterval|DateTimeInterface|int $ttl = null,
         bool $public = false
     ): bool {
         $newValues = [];
@@ -69,12 +90,12 @@ class Record
         );
     }
 
-    public function increment(string $key, mixed $value = 1, bool $public = false): int|bool
+    public function increment(string $key, mixed $value = 1, bool $public = false): bool|int
     {
         return $this->repository->increment($this->id($key, $public), $value);
     }
 
-    public function decrement(string $key, mixed $value = 1, bool $public = false): int|bool
+    public function decrement(string $key, mixed $value = 1, bool $public = false): bool|int
     {
         return $this->repository->decrement($this->id($key, $public), $value);
     }
@@ -89,34 +110,13 @@ class Record
         return $this->repository->deleteMultiple($this->ids($keys, $public));
     }
 
-    public function __set(string $name, mixed $value): void
+    private function id(string $key, bool $public): string
     {
-        $this->set($name, $value);
+        return 'ussd:'.($public ? $this->gid : $this->uid).":{$key}";
     }
 
-    public function __get(string $name): mixed
+    private function ids(array $keys, bool $public): array
     {
-        return $this->get($name);
-    }
-
-    public function __isset(string $name): bool
-    {
-        return $this->has($name);
-    }
-
-    public function __unset(string $name): void
-    {
-        $this->forget($name);
-    }
-
-    public function __invoke(string|array $argument): mixed
-    {
-        if (is_string($argument)) {
-            return $this->get($argument);
-        }
-
-        if (is_array($argument)) {
-            return $this->setMany($argument);
-        }
+        return array_map(fn ($key) => $this->id($key, $public), $keys);
     }
 }
