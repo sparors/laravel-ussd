@@ -14,6 +14,12 @@ You can install the package via composer:
 composer require sparors/laravel-ussd:^3
 ```
 
+For older version use
+
+``` bash
+composer require sparors/laravel-ussd:^2
+```
+
 Laravel Ussd provides zero configuration out of the box. To publish the config, run the vendor publish command:
 
 ``` bash
@@ -22,108 +28,84 @@ php artisan vendor:publish --provider="Sparors\Ussd\UssdServiceProvider" --tag=u
 
 ## Usage
 
-### Context
+For older version look here: [V2 README](./v2.readme.md)
 
-The context of the ussd contains vital data required to succcessfully run a ussd application. It require 3 major input and any addition one you may choose to provide.
+### Creating USSD menus
 
-SID: refers to a unique id for every session.
-
-GID: refers to a group id that is common to a user accross session. This is ussually just the phone number or msisdn.
-
-Input: is the last input the user entered.
-
-Aside these, you may choose to pass addition information like network and phone number if you may need them.
-
-``` php
+```php
 <?php
 
+namespace App\Ussd\States;
+
+use App\Ussd\Actions\TransferAccountAction;
+use Sparors\Ussd\Attributes\Paginate;
+use Sparors\Ussd\Attributes\Transition;
 use Sparors\Ussd\Context;
-
-Context::create(
-    request('sessionID'),
-    request('phoneNumber'),
-    request('input')
-)->with([
-    'network' => request('network'),
-    'phone_number' => request('phoneNumber')
-])
-```
-
-### Record
-
-Ussd record provides a simple way to save data as your application runs.
-
-``` php
-<?php
-
+use Sparors\Ussd\Contracts\State;
+use Sparors\Ussd\Decisions\Equal;
+use Sparors\Ussd\Decisions\Fallback;
+use Sparors\Ussd\Decisions\In;
+use Sparors\Ussd\Menu;
 use Sparors\Ussd\Record;
+use Sparors\Ussd\Traits\WithPagination;
 
-$record = App::make(Record::class);
+#[Transition(to: TransferAccountAction::class, match: new Equal(1))]
+#[Transition(to: TransferAmountState::class, match: new In(2, 3), callback: [self::class, 'setTransferType'])]
+#[Transition(to: NewAccountNameState::class, match: new Equal(4))]
+#[Transition(to: HelplineState::class, match: new Equal(5))]
+#[Transition(to: InvalidInputState::class, match: new Fallback())]
+#[Paginate(next: new Equal('#'), previous: new Equal('0'))]
+class CustomerMenuState implements State
+{
+    use WithPagination;
 
-$record->set('name', 'Isaac');
+    public function render(): Menu
+    {
+        return Menu::build()
+            ->line('Banc')
+            ->listing($this->getItems(), page: $this->currentPage(), perPage: $this->perPage())
+            ->when($this->hasPreviousPage(), fn (Menu $menu) => $menu->line('0. Previous'))
+            ->when($this->hasNextPage(), fn (Menu $menu) => $menu->line('#. Next'))
+            ->text('Powered by Sparors');
+    }
+
+    public function setTransferType(Context $context, Record $record)
+    {
+        $transferType = '2' === $context->input() ? 'deposit' : 'withdraw';
+
+        $record->set('transfer_type', $transferType);
+    }
+
+    public function getItems(): array
+    {
+        return [
+            'Transfer',
+            'Deposit',
+            'Withdraw',
+            'New Account',
+            'Helpline',
+        ];
+    }
+
+    public function perPage(): int
+    {
+        return 3;
+    }
+}
 ```
 
-### Dependency Injection
-
-You can inject record and context into ussd application to make use of them when needed.
-
-### States
-
-We provide an artisan command which allows you to quickly create new states. State should have one method render which returns `Sparors\Ussd\Menu`
-
-``` bash
-php artisan ussd:state WelcomeState
-```
-
-States help build ussd menus that users interupt with. `Sparors\Ussd\Menu` provides a fluent API to easily create menus. `Sparors\Ussd\Attributes\Transition` attributes help to define how to connect one state to another while `Sparors\Ussd\Attributes\Terminate` help know the final state.
+An example of a final state
 
 ``` php
 <?php
 
 namespace App\Ussd\States;
 
-use Sparors\Ussd\Menu;
-use Sparors\Ussd\Context;
-use Sparors\Ussd\Decisions\Equal;
+use Sparors\Ussd\Attributes\Terminate;
 use Sparors\Ussd\Contracts\State;
-use Sparors\Ussd\Attributes\Transition;
+use Sparors\Ussd\Menu;
+use Sparors\Ussd\Record;
 
-#[Transition(MakePaymentAction::class, new Equal(1))]
-#[Transition(InvalidInputState::class, new Fallback)]
-class WelcomeState implements State
-{
-    public function render(Context $context): Menu
-    {
-       return Menu::build()
-            ->text('Welcome To Laravel USSD')
-            ->lineBreak(2)
-            ->line('Select an option . ' . $context->get('network'))
-            ->listing([
-                'Airtime Topup',
-                'Data Bundle',
-                'TV Subscription',
-                'ECG/GWCL',
-                'Talk To Us'
-            ])
-            ->lineBreak(2)
-            ->text('Powered by Sparors');
-    }
-}
-```
-
-The first state should implement `Sparors\Ussd\Contracts\InitialState` instead of the generic state.
-
-Due to some limitation with PHP 8.0, you can not pass class instance to attributes. So to other come this limitation, you can pass an array with the full class path as the first element and the rest should be argument required.
-
-``` php
-#[Transition(MakePaymentAction::class, [Equal::class, 1])]
-#[Transition(InvalidInputState::class, Fallback::class)]
-class WelcomeState implements State {}
-```
-
-Final States should not have `Transition` but rather `Terminate`.
-
-``` php
 #[Terminate]
 class GoodByeState implements State
 {
@@ -134,15 +116,73 @@ class GoodByeState implements State
 }
 ```
 
-### Actions
+Due to some limitation with PHP 8.0, you can not pass class instance to attributes. So to other come this limitation, you can pass an array with the full class path as the first element and the rest should be argument required. eg.
 
-We provide a ussd artisan command which allows you to quickly create new actions. Action should have one method execute which returns a string.
+``` php
+<?php
 
-``` bash
-php artisan ussd:action MakePaymentAction
+namespace App\Ussd\States;
+
+use Sparors\Ussd\Attributes\Transition;
+use Sparors\Ussd\Contracts\State;
+use Sparors\Ussd\Menu;
+
+#[Transition(MakePaymentAction::class, [Equal::class, 1])]
+#[Transition(InvalidInputState::class, Fallback::class)]
+class WelcomeState implements State
+{
+    public function render(): Menu
+    {
+       return Menu::build()->text('Welcome');
+    }
+}
 ```
 
-Actions should return a string which is the full qualified path to a state or another action.
+### Building USSD
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Ussd\Actions\MenuAction;
+use App\Ussd\Responses\AfricasTalkingResponse;
+use App\Ussd\States\WouldYouLikeToContinueState;
+use Illuminate\Http\Request;
+use Sparors\Ussd\Context;
+use Sparors\Ussd\ContinuingMode;
+use Sparors\Ussd\Ussd;
+
+class UssdController extends Controller
+{
+    public function __invoke(Request $request)
+    {
+        $lastText = $request->input('text') ?? '';
+
+        if (strlen($lastText) > 0) {
+            $lastText = explode('*', $lastText);
+            $lastText = end($lastText);
+        }
+
+        return Ussd::build(
+            Context::create(
+                $request->input('sessionId'),
+                $request->input('phoneNumber'),
+                $lastText
+            )
+            ->with(['phone_number' => $request->input('phoneNumber')])
+        )
+        ->useInitialState(MenuAction::class)
+        ->useContinuingState(ContinuingMode::CONFIRM, now()->addMinute(), WouldYouLikeToContinueState::class)
+        ->useResponse(AfricasTalkingResponse::class)
+        ->run();
+    }
+}
+```
+
+### Conditional Branching
+
+Use USSD action to conditional decide which state should be the next.
 
 ``` php
 <?php
@@ -150,8 +190,8 @@ Actions should return a string which is the full qualified path to a state or an
 namespace App\Http\Ussd\Actions;
 
 use Sparors\Ussd\Contracts\Action;
-use App\Http\Ussd\States\PaymentSuccess;
-use App\Http\Ussd\States\PaymentError;
+use App\Http\Ussd\States\PaymentSuccessState;
+use App\Http\Ussd\States\PaymentErrorState;
 
 class MakePayment extends Action
 {
@@ -162,54 +202,25 @@ class MakePayment extends Action
         ]);
 
         if ($response->ok()) {
-            return PaymentSuccess::class;
+            return PaymentSuccessState::class;
         }
 
-        return PaymentError::class;
+        return PaymentErrorState::class;
     }
 }
 ```
 
-### Running a ussd Application
+### Group logic with USSD configurator
 
-``` php
-<?php
+You can use configurator to simplify repetitive parts of your application so they can be shared easily.
 
-namespace App\Http\Controllers;
-
-use Sparors\Ussd\Ussd;
-use Sparors\Ussd\Context;
-use App\Ussd\States\WelcomeState;
-
-class UssdController extends Controller
-{
-    public function index()
-    {
-        return Ussd::build(
-                    Context::create(
-                        request('sessionID'),
-                        request('phoneNumber'),
-                        request('input')
-                    )->with([
-                        'network' => request('network'),
-                        'phone_number' => request('phoneNumber')
-                    ])
-                )
-                ->useInitialState(WelcomeState::class)
-                ->run();
-    }
-}
-```
-
-### Simplifying USSD with configurator
-
-You can use configurator to simplify repetitive parts of your application so they can be shared easily. Just implement and `Sparors\Ussd\Contracts\Configurator` interface and use it in your machine.
 ```php
 <?php
 
+namespace App\Http\Ussd\Configurators;
+
 use Sparors\Ussd\Contracts\Configurator;
 
-// Creating a configurator in eg. App\Http\Ussd\Configurators\Nsano.php
 class Nsano implements Configurator
 {
     public function configure(Ussd $ussd): void
@@ -227,37 +238,10 @@ class Nsano implements Configurator
 }
 ?>
 ```
-```php
-<?php
-
-namespace App\Http\Controllers;
-
-use Sparors\Ussd\Facades\Ussd;
-use App\Http\Ussd\States\Welcome;
-use App\Http\Ussd\Configurators\Nsano;
-
-// Using it in a controller
-class UssdController extends Controller
-{
-    public function index()
-    {
-        return Ussd::build(Context::create('1', '2', '3'))
-            ->useConfigurator(Nsano::class)
-            ->useInitialState(Welcome::class)
-            ->run();
-    }
-}
-?>
-```
-
-### Documentation
-
-You'll find the documentation on [https://sparors.github.io/ussd-docs](https://sparors.github.io/ussd-docs/).
-
 
 ### Testing
 
-You can easily test how your ussd application will respond to user input
+You can easily test how your ussd application with our testing utilities
 
 ``` php
 <?php
@@ -285,24 +269,28 @@ final class UssdTest extends TestCase
 }
 ```
 
-### Change log
+## Documentation
+
+You'll find the documentation on [https://github.com/sparors/laravel-ussd/wiki](https://github.com/sparors/laravel-ussd/wiki) for V3 and [https://sparors.github.io/ussd-docs](https://sparors.github.io/ussd-docs/) for V2.
+
+## Change log
 
 Please see the [changelog](changelog.md) for more information on what has changed recently.
 
-### Contributing
+## Contributing
 
 Please see [contributing.md](contributing.md) for details and a todolist.
 
-### Security
+## Security
 
 If you discover any security related issues, please email isaacsai030@gmail.com instead of using the issue tracker.
 
-### Credits
+## Credits
 
 - [Sparors Inc][link-author]
 - [All Contributors][link-contributors]
 
-### License
+## License
 
 MIT. Please see the [license file](LICENSE) for more information.
 
