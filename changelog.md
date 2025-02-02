@@ -4,6 +4,16 @@ All notable changes to `laravel Ussd` will be documented in this file.
 
 ## [Unreleased]
 
+## [v2.6.0] - 2025-02-02
+
+### Added
+- Add Laravel 11 support
+
+## [v2.5.1] - 2023-02-21
+
+### Added
+- Add Laravel 10 support
+
 ## [v2.5.0] - 2022-06-19
 ### Added
 - Add configuring USSDs using decorator pattern.
