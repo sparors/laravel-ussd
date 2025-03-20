@@ -4,6 +4,11 @@ All notable changes to `laravel Ussd` will be documented in this file.
 
 ## [Unreleased]
 
+## [v2.7.0] - 2025-03-20
+
+### Added
+- Add Laravel 12 support
+
 ## [v2.6.0] - 2025-02-02
 
 ### Added
