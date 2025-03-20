@@ -4,6 +4,10 @@ All notable changes to `laravel Ussd` will be documented in this file.
 
 ## [Unreleased]
 
+## [v3.0.0-beta.3] - 2025-03-20
+### Added
+- Add Laravel 12 support.
+
 ## [v3.0.0-beta.2] - 2025-02-02
 ### Added
 - Add Laravel 11 support.
